@@ -1,0 +1,26 @@
+{
+  "home":1
+
+, "theme":"default"
+
+, "sitename":""
+, "description":""
+
+, "languages":["fr","nl"]
+
+, "plugins": [
+  {"label":"analytics","namespace":"plugins\\analytics","installed":"1","ga":"test","description":"Adds analytics each html-page","path":"plugins\/analytics"}
+, {"label":"canonical","namespace":"plugins\\canonical","installed":"1","path":"plugins\/canonical","description":"Adds canonical url to each page based on language and page slug"}
+, {"label":"social","namespace":"plugins\\social","installed":"1","title":"","share":"","image":"","description":"Adds Facebook graph data to each html-page","path":"plugins\/social"}
+]
+
+, "templates":[
+  {"parent":"","label":"base","description":"base template, all other templates extend this one","file":"base.html","meta":[{"type":"Text","key":"seo_title","tab":"SEO"},{"type":"TextArea","key":"seo_description","tab":"SEO"}]}
+, {"parent":"base","label":"home","description":"template for the homepage of your site","file":"home.html","meta":[]}
+, {"parent":"base","label":"contact","description":"template for a contactform","file":"contact.html","meta":[{"type":"Text","key":"contact_email","tab":"CONTACT"},{"type":"Text","key":"contact_tel","tab":"CONTACT"}]}
+]
+
+, "contenttypes":[
+  {"label":"image", "description":"an image contenttype with predefined resolutions", "resolution-small":"300x300", "resolution-big":"900x900", "templates":"base", "meta":[{"type":"File","key":"file"},{"type":"Text","key":"title"},{"type":"TextArea","key":"description"}]}
+]
+}

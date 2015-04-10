@@ -1,0 +1,6 @@
+[2015-03-27 15:16:55] SlimMonoLogger.ERROR: Undefined index: label [] []
+[2015-03-27 15:17:38] SlimMonoLogger.ERROR: Undefined index: label [] []
+[2015-03-27 20:42:04] SlimMonoLogger.ERROR: array_merge(): Argument #2 is not an array [] []
+[2015-03-27 22:17:25] SlimMonoLogger.ERROR: Invalid data type given, api\Controller\ContenttypesController [] []
+[2015-03-27 22:17:57] SlimMonoLogger.ERROR: Undefined property: stdClass::$contenttypes [] []
+[2015-03-27 22:18:13] SlimMonoLogger.ERROR: Undefined property: stdClass::$contenttypes [] []

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg width="68px" height="17px" viewBox="0 0 68 17" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:sketch="http://www.bohemiancoding.com/sketch/ns">
+    <title>icons</title>
+    <description>Created with Sketch (http://www.bohemiancoding.com/sketch)</description>
+    <defs></defs>
+    <g id="Page-1" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd" sketch:type="MSPage">
+        <path d="M0,0 L0,3 L17,3 L17,0 L0,0 Z M0,7 L0,10 L17,10 L17,7 L0,7 Z M0,14 L0,17 L17,17 L17,14 L0,14 Z" id="hamburger_inactive" fill="#989898" sketch:type="MSShapeGroup"></path>
+        <path d="M17,0 L17,3 L34,3 L34,0 L17,0 Z M17,7 L17,10 L34,10 L34,7 L17,7 Z M17,14 L17,17 L34,17 L34,14 L17,14 Z" id="hamburger_inactive" fill="#343434" sketch:type="MSShapeGroup"></path>
+        <path d="M55,17 L55,0 L64,8.5 L55,17 Z" id="arrow_active" fill="#343434" sketch:type="MSShapeGroup" transform="translate(59.500000, 8.500000) rotate(-90.000000) translate(-59.500000, -8.500000) "></path>
+        <path d="M38,17 L38,0 L47,8.5 L38,17 Z" id="arrow_active" fill="#989898" sketch:type="MSShapeGroup" transform="translate(42.500000, 8.500000) rotate(-270.000000) translate(-42.500000, -8.500000) "></path>
+    </g>
+</svg>

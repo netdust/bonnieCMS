@@ -1,0 +1,47 @@
+{
+  "name": "netdust-cms",
+  "description": "a content manager for easy webdevelopment",
+  "keywords": [
+    "netdust",
+    "cms",
+    "admin",
+    "gulp",
+    "bower",
+    "composer",
+    "less",
+    "slim-php",
+    "backbone"
+  ],
+  "homepage": "https://github.com/netdust/nt-cms",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Stefan Vandermeulen",
+      "email": "stefan@netdust.be",
+      "homepage": "http://netdust.be"
+    }
+  ],
+  "type": "cms",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "tests",
+    "build"
+  ],
+  "dependencies": {},
+  "devDependencies": {
+    "foundation": "~5.5.1",
+    "backbone": "~1.1.2",
+    "backbone-forms": "~0.14.0",
+    "requirejs": "~2.1.16",
+    "requirejs-text": "~2.0.14",
+    "underscore": "~1.8.2",
+    "backbone.subroute": "~0.4.5",
+    "dropzone": "~4.0.1",
+    "epiceditor": "~0.2.3",
+    "backbone-relational": "~0.9.0",
+    "nestedSortable": "~1.3.4",
+    "jquery-ui": "~1.11.4",
+    "components-font-awesome": "~4.3.0"
+  }
+}

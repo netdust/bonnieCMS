@@ -1,0 +1,6 @@
+{
+  "directory": "./src/_system/bower",
+  "scripts": {
+    "postinstall": "gulp init"
+  }
+}

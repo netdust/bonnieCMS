@@ -1,0 +1,4 @@
+{
+  plugins: [{"label":"social","namespace":"plugins\\social","installed":"1","title":"","share":"","image":"","description":"Adds Facebook graph data to each html-page","path":"plugins\/social"}]
+  , templates:[]
+}

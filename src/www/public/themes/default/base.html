@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en"> <![endif]-->
+<!--[if gt IE 8]><!--><html class="no-js" lang="en"> <!--<![endif]-->
+
+<head>
+    <!--    Stefan Vandermeulen | http://netdust.be/    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1, minimum-scale=1,  user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+    <link rel="{{page_seo_title(1)}}" href="/favicon.ico" />
+    <meta charset="utf-8"/>
+
+    <title>{{ page_title() | striptags }}</title>
+    <meta name="description" content="{{page_seo_description(1)}}"/>
+    <meta name="keywords" content="{{page_keywords(1)}}"/>
+
+
+    <link rel="stylesheet" href="{{__csspath('main.css')}}">
+
+    <!--[if lt IE 9]>
+        <script type="text/javascript" src="//cdnjs.cloudflare.com/ajax/libs/modernizr/2.8.3/modernizr.min.js"></script>
+        <script type="text/javascript" src="{{util_jspath('plugins/matchMedia.js')}}"></script>
+        <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+
+    {{hook('header')}}
+</head>
+
+<body class="">
+
+{{hook('render.after.body')}}
+<!--[if lt IE 9]>
+<div style="color: #434343;text-align: center;margin-bottom: 2em;"><h1>Did you know that your Internet Explorer is out of date?</h1>To get the best possible experience using our site we recommend that you <a target="_blank" href="http://browsehappy.com/">upgrade</a> to a modern web browser.</div>
+<![endif]-->
+
+<div class="header-background">
+    <header class="row center-hort" role="main-header" ><div class="c-12">
+        <h1><img src="{{__imagepath('logo_header.png')}}" alt="garnier logo" /></h1>
+        <nav class="i18n" role="language-navigation">
+            {{get_locale()}}
+        </nav>
+
+    </div></header>
+</div>
+
+{% block content %}
+{% endblock %}
+
+<div class="footer-background">
+    <footer class="row center-hort"><div class="c-12">
+        <img src="{{__imagepath('logo_footer.png')}}" alt="garnier logo" />
+        <nav class="social" role="footer-nav">
+            <a target="_blank" href="{{page_ruleslink(1)}}">{{page_rules(1)}}</a>
+            <a class="square" target="_blank" href="https://www.facebook.com/garnier.belgium?fref=ts"><i class="icon-facebook"></i></a>
+            <a class="square" target="_blank" href="https://www.youtube.com/user/garnierbe"><i class="icon-youtube"></i></a>
+
+        </nav>
+    </div></footer>
+</div>
+
+<script data-main="{{__jspath('common.js')}}" src="{{__jspath('vendor/require.js')}}"></script>
+
+{{hook('script')}}
+<script type="text/javascript">
+
+    var app_root    = "{{__root()}}"; // used for require in main.js
+
+    define('bootstrap', function(){
+        return {
+            settings: {
+                path        : "{{__path()}}",
+                root        : "{{__root()}}",
+                host        : "{{__host()}}",
+                locale      : "{{lang}}"
+            }
+        };
+    });
+
+</script>
+
+</body>
+</html>

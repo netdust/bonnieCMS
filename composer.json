@@ -1,0 +1,62 @@
+{
+  "name": "netdust-cms",
+  "description": "a content manager for easy webdevelopment",
+  "keywords": [
+    "netdust",
+    "cms",
+    "admin",
+    "gulp",
+    "bower",
+    "composer",
+    "less",
+    "slim-php",
+    "backbone"
+  ],
+  "homepage": "https://github.com/netdust/nt-cms",
+  "license": "GPL-3.0",
+  "authors": [
+    {
+      "name": "Stefan Vandermeulen",
+      "email": "stefan@netdust.be",
+      "homepage": "http://netdust.be"
+    }
+  ],
+  "type": "cms",
+  "config": {
+    "vendor-dir": "./src/_system/vendor"
+  },
+  "require": {
+    "php": ">=5.4",
+    "j4mie/paris": "*",
+    "slim/slim": "*",
+    "slim/views": "*",
+    "slim/extras": "*",
+    "slim/middleware": "*",
+    "monolog/monolog": "*",
+    "flynsarmy/slim-monolog": "*",
+    "michelf/php-markdown": "~1.5.0",
+    "aptoma/twig-markdown": "~1.1",
+    "twig/twig":"~1.0",
+    "phpmailer/phpmailer": "v5.2.9"
+
+  },
+  "archive": {
+    "exclude": ["/src", "/test*",  ".DS_Store", "*.log"]
+  },
+  "autoload": {
+    "psr-0": {
+      "api": "build/system"
+      , "cms": "build/system/api/Model"
+      , "helpers": "build/system/api"
+      , "libraries": "build/system/api"
+    }
+  },
+  "scripts": {
+      "post-install-cmd": [
+          "npm install"
+      ],
+      "post-update-cmd": [
+          "npm install"
+    ]
+  }
+}

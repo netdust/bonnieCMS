@@ -1,0 +1,7 @@
+[2015-03-26 20:55:44] SlimMonoLogger.ERROR: Object of class api\Controller\PluginController could not be converted to string [] []
+[2015-03-26 21:29:04] SlimMonoLogger.ERROR: Object of class stdClass could not be converted to int [] []
+[2015-03-26 21:29:04] SlimMonoLogger.ERROR: Object of class stdClass could not be converted to int [] []
+[2015-03-26 21:42:13] SlimMonoLogger.ERROR: Only variables should be assigned by reference [] []
+[2015-03-26 22:14:32] SlimMonoLogger.ERROR: Use of undefined constant key - assumed 'key' [] []
+[2015-03-26 22:16:05] SlimMonoLogger.ERROR: Use of undefined constant key - assumed 'key' [] []
+[2015-03-26 22:18:06] SlimMonoLogger.ERROR: Trying to get property of non-object [] []

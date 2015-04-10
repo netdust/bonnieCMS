@@ -1,0 +1,17 @@
+<div class="row collapse" >
+    <div class="small-3 columns">
+        <span class="prefix"><div data-editors="key"></div></span>
+    </div>
+    <div class="small-8 columns field" data-editors="value"></div>
+    <div class="small-1 columns">
+        <a href="#" data-dropdown="drop-<%= unique %>" class="coglink" ><i class="fa fa-cog"></i></a>
+    </div>
+    <ul id="drop-<%= unique %>" data-dropdown-content class="f-dropdown">
+        <li class="option text">Text</li>
+        <li class="option textarea">TextArea</li>
+        <li class="option date">Date</li>
+        <li class="option list">List</li>
+        <li class="option file">File</li>
+        <li class="option remove">- Remove</li>
+    </ul>
+</div>

@@ -1,0 +1,188 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<div class="home">
+
+    <section class="intro">
+
+        <div class="row">
+            <div class="columns c-12 medium-c-6 text">
+                <h1>{{page.title|markdown}}</h1>
+                <div class="drop-shadow lifted">
+                    <p>{{page.content|markdown}}</p>
+                </div>
+            </div>
+            <div class="columns c-12 medium-c-5">
+                <img class="medium-hide" src="{{__imagepath('product.png')}}" />
+                <div class="socialshare">Partagez sur <a class="square" target="_blank" href="{{ facebook( loc.url~'/'~lang, page.seo_title, page.share ) }}"><i class="icon-facebook"></i></a> ou <a class="square" target="_blank" href="{{ twitter( loc.url~'/'~lang, page.twitter) }}"><i class="icon-twitter"></i></a></div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="columns c-12 medium-c-7 centered">
+                <div class="cta">
+                    <h2>{{page.cta|markdown}}</h2>
+                    <a href="#formpage" class="button">{{page.button}}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+
+
+    <section class="description">
+        <div class="row">
+            <div class="columns c-12 medium-c-7 image">
+                <img src="{{__imagepath('woman.png')}}" />
+            </div>
+            <div class="columns end c-12 medium-c-5 text">
+                <h1>{{page_title(2)}}</h1>
+                <p>{{page_content(2)}}</p>
+                <div class="cta">
+                    <h2>{{page.cta|markdown}}</h2>
+                    <a href="#formpage" class="button">{{page.button}}</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section id="formpage" class="forms">
+        <header class="row formheader"><div class="columns c-12 medium-c-7 centered">
+            <div class="cta">
+                <h2>{{page.cta|markdown}}</h2>
+            </div>
+        </div></header>
+
+        <section class="row step1">
+            <div class="columns c-12 medium-c-5 text">
+                <div class="drop-shadow lifted">
+                    <h2>{{page_title(3)}}</h2>
+                    <p>{{page_content(3)}}</p>
+                    <div class="disclaimer">
+                        {{page_disclaimer(3)|markdown}}
+                    </div>
+                </div>
+            </div>
+            <div class="columns end c-12 medium-c-5 frm">
+                <div class="drop-shadow lifted">
+                    <div class="balloon">
+                        {{page_preview(3)|raw}}
+                    </div>
+                    <form id="friendform" method="post" action="">
+                        <h2>{{page_fieldset(3)}}:</h2>
+                        <div class="inputfield">
+                            <label>{{i18n.firstname}}*</label>
+                            <input type="text" name='friend_name' required />
+                        </div>
+                        <div class="inputfield">
+                            <label class="lg">{{i18n.language}}*</label>
+                            <input type="radio" name="friend_lg" value="fr"  {{ lang == 'fr' ? 'checked': '' }}><label></label>FR
+                            <input type="radio" name="friend_lg" value="nl" {{ lang == 'nl' ? '': 'checked' }} ><label></label>NL
+                        </div>
+                        <div class="inputfield">
+                            <label for="gsmnumber">{{i18n.gsm}}*</label>
+                            <input placeholder="04XX XXXXXX" id="gsmnumber" type="text" name='friend_gsm' />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.email}}*</label>
+                            <input type="email" name='friend_email' required />
+                        </div>
+
+                        <div class="required">*{{i18n.required}}</div>
+                        <div class="preview"><a href="#">{{i18n.preview}}</a></div>
+                        <input class="submit button" type="submit" value="{{i18n.validate}}"/>
+                    </form>
+                </div>
+            </div>
+
+        </section>
+
+        <section class="row step2">
+            <form id="userform" method="post" action="">
+                <input type="hidden" name="{{csrf_key}}" value="{{csrf_token}}">
+                <div class="columns c-12 medium-c-5 text">
+                    <div class="drop-shadow lifted">
+                        <h2>{{page_title(4)}}</h2>
+                        <p>{{page_content(4)}}</p>
+                        <div class="disclaimer">
+                            {{page_disclaimer(4)}}
+                        </div>
+
+                        <h2>{{page_fieldset(4)}}:</h2>
+                        <div class="inputfield">
+                            <label>{{i18n.lastname}}*</label>
+                            <input type="text" name='lastname' required />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.firstname}}*</label>
+                            <input type="text" name='firstname' required />
+                        </div>
+                        <div class="inputfield">
+                            <label class="sex">{{i18n.gender}}*</label>
+                            <input type="radio" name="sex" value="f" checked><label></label>{{i18n.female}}
+                            <input type="radio" name="sex" value="m" ><label></label>{{i18n.male}}
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.email}}*</label>
+                            <input type="email" name='email' required />
+                        </div>
+                    </div>
+                </div>
+                <div class="columns end c-12 medium-c-5 frm">
+                    <div class="drop-shadow lifted">
+
+                        <div class="inputfield">
+                            <label>{{i18n.street}}* :</label> <input type="text"  name='street' required />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.nr}}* :</label> <input type="text"  name='nr' required />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.box}} :</label> <input type="text"  name='box' />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.city}}* :</label> <input type="text"  name='city' required />
+                        </div>
+                        <div class="inputfield">
+                            <label>{{i18n.code}}* :</label> <input type="text" id='code' name='code' required />
+                        </div>
+
+                        <div class="inputfield">
+                            <input type="checkbox" id="ruless" name="ruless" required /><label for="ruless"></label><span>{{i18n.rules|raw}}*</span>
+                        </div>
+
+                        <div class="inputfield">
+                            <input type="checkbox" id="newsletter_b" name="newsletterb" required checked /><label for="newsletter_b"></label><span>{{i18n.newsletter_b}}</span>
+                        </div>
+
+                        <div class="inputfield">
+                            <input type="checkbox" id="newsletter_l" name="newsletterl" /><label for="newsletter_l"></label><span>{{i18n.newsletter_l}}</span>
+                        </div>
+
+
+
+                        <div class="required">*{{i18n.required}}</div>
+                        <input class="submit button" type="submit" value="{{i18n.sent}}"/>
+                    </div>
+                </div>
+            </form>
+        </section>
+        <section class="row step3">
+            <div class="columns c-12 medium-c-5 text">
+                <div class="drop-shadow lifted">
+                    <h2>{{page_title(5)}}</h2>
+                    <p>{{page_content(5)}}</p>
+                </div>
+            </div>
+            <div class="columns end c-12 medium-c-5 frm">
+                <div class="drop-shadow lifted">
+                    <h2>{{page_cta(5)}}</h2>
+                    {% set button = page_button(5) %}
+                    <a class="button" href="{{ facebook( loc.url~'/'~lang, page.seo_title, page.share ) }}">{{button}} <span class="square"><i class="icon-facebook"></i></span> </a>
+                    <a class="button" href="{{ twitter( loc.url~'/'~lang, page.twitter) }}">{{button}} <span class="square"><i class="icon-twitter"></i></span></a>
+                </div>
+            </div>
+        </section>
+    </section>
+</div>
+{% endblock %}

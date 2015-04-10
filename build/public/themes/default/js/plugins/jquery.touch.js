@@ -1,0 +1,7 @@
+/**
+ * jquery-simple-touch
+ * Simple support for touch events in jQuery. Simple integration with Backbone
+ * @author Marco Dias Lopes
+ * @version 0.1.5 [2013-07-02]
+ */
+(function(t){"use strict";"function"==typeof define&&define.amd?define(["jquery"],t):t(jQuery)})(function(t){"use strict";var e,n={},i=null,o=50,r=25,u=250;return t?(t(document).ready(function(){t("body").bind("touchstart",function(e){var o=new Date,r=o-(n.last||o),a=e.originalEvent.touches[0];i&&clearTimeout(i),n.$target=t(a.target),n.initX=a.pageX,n.last=o,r>0&&u>=r&&(n.isDoubleTap=!0)}).bind("touchmove",function(t){n.endX=t.originalEvent.touches[0].pageX}).bind("touchend",function(t){t.preventDefault(),n.isDoubleTap?(n.$target.trigger("doubletap"),n={}):n.endX>0?(n.initX-n.endX>o?e="left":n.endX-n.initX>o&&(e="right"),setTimeout(function(){n.$target.trigger("swipe",{type:e}),n.$target.trigger("swipe"+e),n.initX=n.endX=n.last=0},r)):n.hasOwnProperty("last")&&(i=setTimeout(function(){i=null,n.$target.trigger("tap"),n={}},u))}).bind("touchcancel",function(){n={}})}),["swipe","swipeleft","swiperight","doubletap","tap"].forEach(function(e){t.fn[e]=function(t){return this.bind(e,t)}}),void 0):(console.error("Unable to find jQuery"),void 0)});

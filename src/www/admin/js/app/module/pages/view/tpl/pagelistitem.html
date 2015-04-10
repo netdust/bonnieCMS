@@ -1,0 +1,22 @@
+
+        <div class="list-content">
+            <div class="pageinfo">
+                <h2><%= label %></h2>
+                <h4>created by: <%= user %>, <%= status %>  </h4>
+            </div>
+        </div>
+
+        <div class="list-extra">
+            <a href="#" data-dropdown="<%= hash( date ) %>" ><i class="fa fa-angle-down extranav" /></a>
+        </div>
+
+        <div class="list-handle">
+            <span><i class="fa fa-bars" /></span>
+        </div>
+
+        <ul id="<%= hash( date ) %>" class="f-dropdown" data-dropdown-content>
+            <li class="option edit">Edit</li>
+            <li class="option copy">Copy</li>
+            <li class="option remove">Remove</li>
+            <li class="option publish">Publish</li>
+        </ul>
