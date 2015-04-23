@@ -13,7 +13,7 @@
     <meta name="{{csrf_key}}" content="{{csrf_token}}">
     <meta charset="utf-8" />
     <title></title>
-    <link rel="stylesheet" href="{{__to( 'admin/css/application.css')}}" />
+    <link rel="stylesheet" href="{{__to( 'admin/css/style.min.css')}}" />
     <script data-main="{{__to( 'admin/js/admin' )}}" src="{{__to('admin/js/lib/require.js')}}"></script>
 </head>
 <body>
@@ -28,7 +28,7 @@
                 settings: {{settings|raw}},
                 modules: {{modules|raw}}
             }
-        });
+        })
     </script>
 </div>
 </body>

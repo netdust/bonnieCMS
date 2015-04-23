@@ -1,9 +1,9 @@
 <?php
 
-namespace plugins\canonical;
+namespace data\plugins\canonical;
 
 use Slim\Slim;
-use api\controller\PageController;
+use \controller\PageController;
 
 
 class Plugin extends \Slim\Middleware {

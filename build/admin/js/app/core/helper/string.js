@@ -2,8 +2,6 @@ define(function (require) {
 
     "use strict";
 
-    var ntdst           = require('ntdst');
-
     return {
         lowercase: function(str){
             return str.toLowerCase();

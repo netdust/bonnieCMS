@@ -6,6 +6,9 @@ $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname(dirname($vendorDir)));
 
 return array(
+    'libraries' => array($baseDir . '/build/system/api'),
+    'helpers' => array($baseDir . '/build/system/api'),
+    'cms' => array($baseDir . '/build/system/api/Model'),
     'api' => array($baseDir . '/build/system'),
     'Twig_Extensions_' => array($vendorDir . '/slim/extras/Views/Extension'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),

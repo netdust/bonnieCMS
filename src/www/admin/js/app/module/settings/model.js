@@ -105,7 +105,7 @@ define(function (require) {
             url: ntdst.options.api + "template",
 
             initialize: function () {
-                //this.fetch();
+
             },
 
             getNames:function() {

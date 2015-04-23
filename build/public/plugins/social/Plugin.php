@@ -1,9 +1,9 @@
 <?php
 
-namespace plugins\social;
+namespace data\plugins\social;
 
 use Slim\Slim;
-use api\controller\PageController;
+use \controller\PageController;
 
 
 class Plugin extends \Slim\Middleware {

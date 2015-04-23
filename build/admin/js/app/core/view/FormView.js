@@ -2,8 +2,6 @@ define(function (require) {
 
     "use strict";
 
-    var ntdst       = require('ntdst');
-
     var $           = require('jquery'),
         Backbone    = require('backbone'),
         Backforms   = require('backbone-forms'),

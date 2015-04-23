@@ -5,7 +5,9 @@ define(function (require) {
     var ntdst               = require('ntdst');
 
     var $                   = require('jquery'),
-        Base                = require('app/module/pages/view/Page');
+        Base                = require('app/module/pages/view/Page'),
+
+        SortList            = require('nestedSortable');
 
     return Base.extend({
 
@@ -40,6 +42,7 @@ define(function (require) {
                 }
             });
 
+
             if( this.model.get('page').length > 0 ) {
                 this.media();
             }
@@ -63,7 +66,7 @@ define(function (require) {
                 this.options.addedfile.call(this, mockFile);
                 mockFile.previewElement.setAttribute('data-dz-id', item.get('id') );
                 mockFile.previewElement.setAttribute('id', 'preview_' + item.get('id') );
-                this.options.thumbnail.call(this, mockFile, root+'/data/upload'+item.get('template'));
+                this.options.thumbnail.call(this, mockFile, root+'/'+item.get('template'));
                 //this.options.thumbnail.call(this, mockFile, ntdst.options.api +"image?src="+root+'/data/upload'+item.get('template'));
             }, this.drop );
 
@@ -73,6 +76,26 @@ define(function (require) {
 
             });
 
+        },
+
+        updatePage: function(e) {
+            if(e.currentTarget == e.target ) {
+                var errors = this.model.validate();
+                if(_.isEmpty(errors))
+                {
+                    var self = this;
+                    self.model.updatePage({
+                        success: function (model) {
+                            self.drop.options.url = ntdst.options.api+'collection/' + model.get('id') + '/upload';
+                            self.drop.options.params = {"dir":"collection_"+model.get('id')+"/"};
+                            self.drop.processQueue();
+                        }
+                    });
+                }
+                else {
+                    Backbone.trigger('notification', { message: 'Not all fields are filled in like they should, have a look', type: 'warning' });
+                }
+            }
         },
 
         remove: function()

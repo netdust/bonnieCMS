@@ -30,12 +30,6 @@ define(function (require) {
             ntdst.api.createLanguage( this._meta );
 
             MetaView.prototype.initialize.apply(this, arguments);
-        },
-
-
-        beforeRender: function() {
-           $('#main').removeClass( 'animate' );
-           $('#main').addClass( 'closed' );
         }
 
     });

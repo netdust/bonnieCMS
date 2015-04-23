@@ -12,8 +12,12 @@ define(function (require) {
         Spinner             = require('spinner'),
         Foundation          = require('foundation'),
 
+        sortablelist        = require('sortablelist'),
+
         // backbone plugins import
+        ajax                = require('app/plugins/backbone.ajax'),
         csrf                = require('app/plugins/backbone.csrf'),
+        flash               = require('app/plugins/backbone.flash'),
         click               = require('app/plugins/backbone.click'),
         loading             = require('app/plugins/backbone.loading'),
 
@@ -35,8 +39,12 @@ define(function (require) {
             options : {}
         });
 
+
+
         // event mixin
+        Backbone.Notifications.initialize({el:'#main',stayDuration: 10000});
         _.extend(ntdst.events, Backbone.Events);
+
 
         // setting extra options
         _.extend(ntdst.options, defaults, AppBootstrap.settings);

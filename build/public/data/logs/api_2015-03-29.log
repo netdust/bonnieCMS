@@ -1,3 +1,0 @@
-[2015-03-29 18:51:20] SlimMonoLogger.ERROR: Invalid data type given, api\Controller\ConfigController [] []
-[2015-03-29 18:55:31] SlimMonoLogger.ERROR: Cannot append view data. Expected array argument. [] []
-[2015-03-29 21:18:13] SlimMonoLogger.ERROR: Trying to get property of non-object [] []

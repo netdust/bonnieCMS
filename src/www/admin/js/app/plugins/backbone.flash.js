@@ -23,7 +23,7 @@
         },
         handleNotification : function(p, opts) {
             var tempConfig = _.extend({}, this.config, opts),
-                model = new this.flashModel(p, { config: tempConfig })
+                model = new this.flashModel(p, { config: tempConfig });
             view = new this.flashView({ model: model, config: tempConfig });
             $(tempConfig.el).prepend(view.render().el);
         },

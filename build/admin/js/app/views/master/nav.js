@@ -5,24 +5,27 @@ define(function (require) {
     var BaseView            = require('app/core/view/BaseView'),
         navitem             = require('app/views/master/navitem'),
 
-        container           = document.createDocumentFragment();
+
+        tpl                 = require('app/templates');
 
     return BaseView.extend({
 
-        initialize: function () {
-
-        },
+        template: tpl.navigation,
 
         render: function ()
         {
-            this.$el.append('<ul></ul>');
+            BaseView.prototype.render.apply(this, arguments);
+
+            this.container = document.createDocumentFragment();
+            this.$el.find('nav').append('<ul></ul>');
             this.model.each(this.addItem, this);
-            this.$el.find('ul').append( container );
+            this.$el.find('ul').append( this.container );
+
             return this;
         },
 
         addItem : function( item ) {
-            container.appendChild(
+            this.container.appendChild(
                 new navitem( {model: item } ).render().el
             );
         }

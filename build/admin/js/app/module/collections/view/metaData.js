@@ -29,11 +29,6 @@ define(function (require) {
 
 
             MetaView.prototype.initialize.apply(this, arguments);
-        },
-
-        beforeRender: function() {
-           $('#main').removeClass( 'animate' );
-           $('#main').addClass( 'closed' );
         }
 
     });

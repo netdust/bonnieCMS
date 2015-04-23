@@ -9,22 +9,31 @@ define(function (require) {
         List            = require("app/module/settings/view/SettingsList"),
         PluginForm      = require("app/module/settings/view/PluginForm"),
         MetaForm        = require("app/module/settings/view/MetaForm"),
+        FormView        = require('app/core/view/FormView'),
 
         router =  SubRoute.extend({
             routes: {
                 "": "list",
 
                 "general": "general",
+
                 "plugins": "plugins",
-                "plugins/:label": "plugin_settings"
+                "plugins/:label": "plugin_settings",
+
+                "templates": "templates",
+                "templates/:label": "template_settings",
+
+                "contenttypes": "contenttypes",
+                "contenttypes/:label": "contenttype_settings"
             },
 
             list: function ( )
             {
                 var _model = ntdst.api.modelFactory( 'settingslist', Backbone.Collection, [
                     { id:1, label:'General settings', path:'general', description:'Edit general settings of the website' },
-                    { id:2, label:'Templates', path:'templates', description:'Manage templates and template custom fields' },
-                    { id:3, label:'Plugins', path:'plugins', description:'activate and manage plugins' }
+                    { id:2, label:'ContentTypes', path:'contenttypes', description:'Manage contenttypes for use in templates' },
+                    { id:3, label:'Templates', path:'templates', description:'Manage templates and template custom fields' },
+                    { id:4, label:'Plugins', path:'plugins', description:'activate and manage plugins' }
                 ]);
                 var view  = ntdst.api.viewFactory( 'settingslist', List, {model:_model} );
                 ntdst.api.show( '#app', view );
@@ -52,14 +61,41 @@ define(function (require) {
 
             },
 
+            contenttype_settings: function ( label )
+            {
+                var form = MetaForm.extend( {
+                    data:{title:'Contenttype', label:'Update'},
+                    meta:FormView.extend( { template:_.template('<div><fieldset><legend>Description</legend><div data-fields="label,description"></div></fieldset>') } )
+                });
+
+                var _model = ntdst.api.modelFactory( 'contenttypes', Model.contenttypesCollection );
+                _model = _model.select(function(m) {
+                    return m.get("label") == label;
+                });
+
+                var view  = ntdst.api.viewFactory( 'contenttype' + label, form, {model:_model[0]});
+                ntdst.api.show( '#app', view );
+            },
+
+            contenttypes: function ( )
+            {
+                var _model = ntdst.api.modelFactory( 'contenttypes', Model.contenttypesCollection );
+                var view  = ntdst.api.viewFactory( 'contenttypes', List, {model:_model});
+                ntdst.api.show( '#app', view );
+            },
+
+            templates: function ( )
+            {
+                var _model = ntdst.api.modelFactory( 'templates', Model.templatesCollection );
+                var view  = ntdst.api.viewFactory( 'templates', List, {model:_model});
+                ntdst.api.show( '#app', view );
+            },
+
             plugins: function ( )
             {
                 var _model = ntdst.api.modelFactory( 'plugins', Model.pluginsCollection );
-
                 var view  = ntdst.api.viewFactory( 'plugins', List, {model:_model});
                 ntdst.api.show( '#app', view );
-
-                _model.fetch({reset:true});
             },
 
             general: function ( )
@@ -74,7 +110,10 @@ define(function (require) {
         settings = {
             init: function ( options )
             {
-                this.data( 'templates', {} );
+                this.data( 'plugins', ntdst.options.plugins );
+                this.data( 'templates', ntdst.options.templates );
+                this.data( 'contenttypes', ntdst.options.contenttypes );
+
                 this.data( options['name'], ntdst.options );
                 this.router = new router( options['path'].toLowerCase());
 

@@ -1,5 +1,0 @@
-[2015-04-07 16:55:59] SlimMonoLogger.ERROR: Upload needs parent id [] []
-[2015-04-07 17:08:10] SlimMonoLogger.ERROR: Filesize not accepted for upload [] []
-[2015-04-07 17:10:04] SlimMonoLogger.ERROR: Filesize430671 not accepted for upload [] []
-[2015-04-07 17:11:41] SlimMonoLogger.ERROR: Filetype not accepted for upload [] []
-[2015-04-07 17:13:39] SlimMonoLogger.ERROR: Filetype image/jpegnot accepted for upload [] []

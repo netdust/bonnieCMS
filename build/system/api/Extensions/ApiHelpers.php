@@ -17,7 +17,8 @@ class ApiHelpers extends \Slim\Views\TwigExtension
 
         return array(
             /*new \Twig_SimpleFunction('page_*', array($this, 'page_handler'), $options ),*/
-            new \Twig_SimpleFunction('__*', array($this, 'util_handler'), $options )
+            new \Twig_SimpleFunction('__*', array($this, 'util_handler'), $options ),
+            new \Twig_SimpleFunction('&*', array($this, 'util_handler'), $options )
         );
     }
 

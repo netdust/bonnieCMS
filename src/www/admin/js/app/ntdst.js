@@ -12,6 +12,8 @@ define(function (require) {
         Spinner             = require('spinner'),
         Foundation          = require('foundation'),
 
+        sortablelist        = require('sortablelist'),
+
         // backbone plugins import
         ajax                = require('app/plugins/backbone.ajax'),
         csrf                = require('app/plugins/backbone.csrf'),

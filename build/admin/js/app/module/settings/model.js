@@ -7,20 +7,16 @@ define(function (require) {
 
     var Backbone    = require('backbone'),
 
-        Meta = Backbone.Model.extend({
+        Config = Backbone.Model.extend({
 
-            urlRoot: ntdst.options.api + "meta",
+            urlRoot: ntdst.options.api + "config",
 
             schema: {
-                date_format:                'Text',
-                'i18n.default':             { type: 'Text', message: 'Invalid language', validators: ['required'] },
-                'i18n.languages':           'Text',
-                home_page:                  'Text',
+                languages:                  'Text',
+                home:                       'Text',
                 description:                'Text',
                 sitename:                   { type: 'Text', message: 'Invalid sitename', validators: ['required'] },
-                theme:                      { type: 'Text', message: 'Invalid theme', validators: ['required'] },
-                update_version:             'Text',
-                homepage:                   'Text'
+                theme:                      { type: 'Text', message: 'Invalid theme', validators: ['required'] }
             },
 
             validate: function (attrs) {
@@ -29,7 +25,6 @@ define(function (require) {
             },
 
             initialize: function () {
-
                 this.on("invalid", function(model, error) {
                     console.log( error );
                 });
@@ -38,8 +33,6 @@ define(function (require) {
         }),
 
         Template = Backbone.Model.extend({
-            urlRoot: ntdst.options.api + "template",
-
             tabs:[],
             fields:[],
 
@@ -50,7 +43,7 @@ define(function (require) {
             },
 
             initialize: function () {
-
+                this.set( 'path', 'templates/' + this.get('label') );
             },
 
             getField: function( key ) {
@@ -66,11 +59,11 @@ define(function (require) {
             },
 
             getFields: function(  ) {
-                if( this.fields.length>0) return this.fields;
+                //if( this.fields.length>0) return this.fields;
 
                 this.fields = [];
                 if( this.get('parent') !== '' ){
-                    var parent = this.collection.where({name:this.get('parent')})[0];
+                    var parent = this.collection.where({label:this.get('parent')})[0];
                     this.fields = parent.getFields();
                 }
 
@@ -80,11 +73,12 @@ define(function (require) {
             },
 
             getTabs: function() {
-                if( this.tabs.length>0) return this.tabs;
+
+                //if( this.tabs.length>0) return this.tabs;
 
                 this.tabs = [];
                 if( this.get('parent') !== '' ){
-                    var parent = this.collection.where({name:this.get('parent')})[0];
+                    var parent = this.collection.where({label:this.get('parent')})[0];
                     this.tabs = parent.getTabs();
                 }
 
@@ -111,15 +105,22 @@ define(function (require) {
             url: ntdst.options.api + "template",
 
             initialize: function () {
-                this.fetch();
+
+            },
+
+            getNames:function() {
+                var names = [];
+                this.each(function(model){
+                    names.push( model.get('label') );
+                });
+
+                return names;
             }
 
         }),
 
 
         Plugin = Backbone.Model.extend({
-            urlRoot: ntdst.options.api + "plugin",
-
             defaults: {
                 path:                'path',
                 label:               'label is required',
@@ -135,17 +136,52 @@ define(function (require) {
         Plugins = Backbone.Collection.extend({
             model: Plugin,
             title: 'Plugins',
-            url: ntdst.options.api + "list/plugin",
+            url: ntdst.options.api + "plugin",
+
+            initialize: function () {
+            }
+        }),
+
+        ContentType = Backbone.Model.extend({
+            defaults: {
+                path:                'path',
+                label:               'label is required',
+                description:         'description is required'
+            },
+
+            schema: {
+                description:                { type: 'Text', validators: ['required'] },
+                label:                      { type: 'Text', message: 'Invalid label', validators: ['required'] }
+            },
+
+            initialize: function () {
+                this.set( 'path', 'contenttypes/' + this.get('label') );
+            }
+        }),
+
+        ContentTypes = Backbone.Collection.extend({
+            model: ContentType,
+            title: 'ContentTypes',
+            url: ntdst.options.api + "contenttype",
 
             initialize: function () {
 
+            },
+
+            hasType: function( label ){
+                return this.where({label:label.toLowerCase()}).length>0;
+            },
+
+            getType: function( label ){
+                return this.where({label:label.toLowerCase()})[0];
             }
         });
 
     return {
-        settingsCollection: Meta,
+        settingsCollection: Config,
         templatesCollection: Templates,
-        pluginsCollection: Plugins
+        pluginsCollection: Plugins,
+        contenttypesCollection: ContentTypes
     };
 
 });

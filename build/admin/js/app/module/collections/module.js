@@ -46,7 +46,7 @@ define(function (require) {
                 this.listenTo(view, 'afterrender', function() {
                     this.stopListening(view, 'afterrender');
                     $('.assetsrow .assets').append(this.assettpl);
-                    view.drop = getDrop( _collection, _collection.get('id') );
+                    view.drop = getDrop( _collection );
                 });
 
 
@@ -81,7 +81,7 @@ define(function (require) {
 
                 this.listenTo(_m, 'sync', function() {
                     this.stopListening(_m, 'sync');
-                    ntdst.api.navigate('/collection');
+                    //ntdst.api.navigate('/collection');
                 });
 
 
@@ -103,25 +103,30 @@ define(function (require) {
             }
         },
 
-        getDrop = function( model, id ) {
+        getDrop = function( model ) {
             return ntdst.api.createDropzone(
                 '.zone',
                 {
-                    url:ntdst.options.api+"attachment/" + id,
+                    url:ntdst.options.api+'collection/' + model.get('id') + '/upload',
                     previewTemplate:'<li class="file square-box" draggable="true"><div id="template" class="file-container square-content"><div><span class="preview"><img data-dz-thumbnail /></span></div></div></li>',
                     previewsContainer:'.previewsContainer',
+                    autoProcessQueue:false,
                     success: function( file, response ) {
                         var _m = new Model.attachment( response );
                         model.get('page').add( _m );
                     },
                     init: function() {
                         this.on("addedfile", function(file) {
+
                         });
+                    },
+                    params:{
+                        "dir":"collection_"+model.get('id')+"/"
                     }
                 }
             );
 
-        };
+        };;
 
     return collections;
 });

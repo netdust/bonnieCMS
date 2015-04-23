@@ -229,7 +229,7 @@ $app->group(
             }
             //run the forgotten password method to email an activation code to the user
 
-            $auth = new \libraries\Authentication($email);
+            $auth = new \services\Authentication($email);
             if ($auth->fogottenPassword()){
                 //if there were no errors
                 $app->redirect($app->request->getRootUri(). '/cms/success');
@@ -244,7 +244,7 @@ $app->group(
             $app->render("Authentication/Succes.php");
         });
 
-        // Get contacts
+
         $app->get('(/)(:slug+)', $authenticate, function( $p=array() ) use ($app)
         {
             $users = \ORM::for_table('cms_user')

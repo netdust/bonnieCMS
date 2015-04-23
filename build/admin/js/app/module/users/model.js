@@ -13,12 +13,16 @@ define(function (require) {
             schema: {
                 username:   { type: 'Text', message: 'Invalid username', validators: ['required'] },
                 password:   { type: 'Password', message: 'Invalid password', validators: ['required'] },
-                realname:   'Text',
-                bio:        'Text',
+                first_name: 'Text',
+                last_name:  'Text',
+                phone:      'Text',
                 email:      {type: 'Text', message: 'Invalid email', validators: ['required', 'email'] },
-                status:     {type: 'Select', options: ['inactive', 'active']},
+                active:     {type: 'Boolean'},
                 role:       {type: 'Select', options: ['administrator', 'publisher', 'editor', 'user'] },
                 api_key:    'Text'
+            },
+            default: {
+                password:'***'
             },
 
             validate: function (attrs) {
@@ -44,7 +48,7 @@ define(function (require) {
         UserCollection = Backbone.Collection.extend({
 
             model: User,
-            url: ntdst.options.api + "list/user",
+            url: ntdst.options.api + "user",
 
             initialize: function () {
 

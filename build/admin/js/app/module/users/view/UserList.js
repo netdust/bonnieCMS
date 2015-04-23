@@ -37,6 +37,8 @@ define(function (require) {
 
             $('.data').empty().append( this.$ul );
             $('.data ul').addClass('list');
+            this.updateList();
+
             return  this;
         },
 
@@ -53,7 +55,7 @@ define(function (require) {
         },
 
         addUser: function() {
-            ntdst.api.navigate( 'user/create', true );
+            this.trigger( 'create', 'user' );
         }
     });
 

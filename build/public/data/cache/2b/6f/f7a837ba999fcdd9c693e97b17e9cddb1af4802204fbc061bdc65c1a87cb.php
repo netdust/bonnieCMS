@@ -38,14 +38,22 @@ class __TwigTemplate_2b6ff7a837ba999fcdd9c693e97b17e9cddb1af4802204fbc061bdc65c1
     <title></title>
     <link rel=\"stylesheet\" href=\"";
         // line 16
-        echo $this->env->getExtension('api')->util_handler("to", "admin/css/application.css");
+        echo $this->env->getExtension('api')->util_handler("to", "admin/css/style.min.css");
         echo "\" />
     <script data-main=\"";
         // line 17
         echo $this->env->getExtension('api')->util_handler("to", "admin/js/admin");
         echo "\" src=\"";
         echo $this->env->getExtension('api')->util_handler("to", "admin/js/lib/require.js");
-        echo "\'';
+        echo "\"></script>
+</head>
+<body>
+<div class=\"container\">
+
+</div>
+<div id=\"bootstrap\" role=\"data-bootstrap\" >
+    <script>
+        base='";
         // line 25
         echo twig_escape_filter($this->env, (isset($context["base"]) ? $context["base"] : null), "html", null, true);
         echo "';
@@ -60,7 +68,7 @@ class __TwigTemplate_2b6ff7a837ba999fcdd9c693e97b17e9cddb1af4802204fbc061bdc65c1
         echo (isset($context["modules"]) ? $context["modules"] : null);
         echo "
             }
-        });
+        })
     </script>
 </div>
 </body>

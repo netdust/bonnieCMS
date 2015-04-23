@@ -127,6 +127,5 @@ define(function (require) {
             );
 
         };
-
     return collections;
 });

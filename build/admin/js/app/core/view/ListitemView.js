@@ -2,8 +2,6 @@ define(function (require) {
 
     "use strict";
 
-    var ntdst               = require('ntdst');
-
     var $                   = require('jquery'),
         _                   = require('underscore'),
         BaseView            = require('app/core/view/BaseView');

@@ -13,7 +13,6 @@ define(function (require) {
         model: PageExtend,
 
         hasItemWithKey: function( value ) {
-            console.log( value );
             var c =  new PageExtendCollection( this.filter(
                 function(m) {
                     return m.get('key') == value;

@@ -45,10 +45,10 @@
   },
   "autoload": {
     "psr-0": {
-      "api": "build/system"
-      , "cms": "build/system/api/Model"
-      , "helpers": "build/system/api"
-      , "libraries": "build/system/api"
+      "api": ["build/system","bonnie/system"]
+      , "cms": ["build/system/api/Model", "bonnie/system/api/Model"]
+      , "helpers": ["build/system/api", "bonnie/system/api"]
+      , "libraries": ["build/system/api", "bonnie/system/api"]
     }
   },
   "scripts": {

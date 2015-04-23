@@ -8,7 +8,7 @@ define(function (require) {
 
         Base                = require('app/views/mainview'),
 
-        SortList            = require('sortablelist'),
+        SortList            = require('nestedSortable'),
         PageItemView        = require('app/module/pages/view/PageListItem');
 
     return Base.extend({
@@ -28,6 +28,7 @@ define(function (require) {
 
             var self = this;
             this.renderList();
+
 
             var o = $('.list .sortable-list').nestedSortable({
                 forcePlaceholderSize: true,
@@ -50,6 +51,7 @@ define(function (require) {
                     }, 300);
                 }
             });
+
 
 
             $(document).foundation();

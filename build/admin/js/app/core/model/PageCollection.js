@@ -61,7 +61,7 @@ define(function (require) {
         updateSort: function( l, p ) {
             this._sortItems( l, p );
             Backbone.sync('create', this, {
-                url : ntdst.options.api + 'list/sort',
+                url : ntdst.options.api + 'page/sort',
                 success: function() {}
             });
         },

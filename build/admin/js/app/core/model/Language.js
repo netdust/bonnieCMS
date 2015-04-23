@@ -16,15 +16,21 @@ define(function (require) {
                 language:"nl"
             },
 
+            initialize: function () {
+                var lg = ntdst.options['languages'];
+                this.set( 'language', lg[0] );
+            },
+
+
             getIndex: function( )
             {
-                var lg = ntdst.options['i18n.languages'].split(',');
+                var lg = ntdst.options['languages'];
                 return lg.indexOf( this.get('language') ) + 1;
             },
 
             schema: {
                 language : {type: 'Select', options:function(callback, editor) {
-                    callback( ntdst.options['i18n.languages'].split(',') );
+                    callback( ntdst.options['languages'] );
                 } }
             }
 

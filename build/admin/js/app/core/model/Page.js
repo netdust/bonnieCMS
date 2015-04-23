@@ -60,7 +60,9 @@ define(function (require) {
             this.on("invalid", function(model, error) {
                 console.log( error );
             });
+
         },
+
 
         validate: function (attrs) {
             var errs = {};
@@ -88,33 +90,17 @@ define(function (require) {
             return parseInt(this.get('id'));
         },
 
-        updatePage: function()
+        updatePage: function(options)
         {
-            var options = {};
-            if( this.isNew() ) {
-                this.temp = this.get('page');
-                options = {
-                    success: function (model, response) {
-                        console.log(self.temp);
-                        console.log(model);
-                    },
-                    error: function (model, response) {
-                        console.log("error");
-                    }
-                }
-            }
-
-            this.save(null, options );
+            this.save( null, options );
         },
 
         createCopy: function(options) {
-
             var clone = this.clone();
             options = options || {};
             if( options.url === undefined ) {
-                options.url = this.urlRoot + '/' + this.get('id')  + '/copy/';
+                options.url = this.urlRoot + '/' + this.get('id')  + '/copy';
             }
-
             return Backbone.Model.prototype.fetch.call( clone, options );
         },
 
@@ -133,7 +119,7 @@ define(function (require) {
 
             if(!_.isUndefined(status)) {
                 this.set('status', status );
-                this.save({status: status}, {patch: true});
+                this.save({status: status}, {patch: true, validate:false, url: this.urlRoot + '/' + this.get('id')  + '/status'});
             }
             return status;
         },
@@ -162,11 +148,11 @@ define(function (require) {
         },
 
         getTranslation: function ( id ) {
+
             id = ( _.isUndefined(id) ? ntdst.api.modelFactory('i18n').getIndex() : id );
 
             if( this.get('page_translation').length > 0 ) {
                 var m = this.get('page_translation').getTranslation( id );
-
                 if(  m.length ) {
                     return m.models[0]; // this will work, we only have 1 translation / id
                 }

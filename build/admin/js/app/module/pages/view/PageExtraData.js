@@ -34,6 +34,7 @@ define(function (require) {
             return this;
         },
 
+
         updateTranslation:function(model)
         {
             this.model = model;
@@ -46,7 +47,9 @@ define(function (require) {
             $( '.tabs-content .container').empty();
 
             this.model.each(this._addItem, this);
-            this.temp_collection.each(this._addItem, this);
+            if( this.temp_collection!=null ) { // object could be cleared after update
+                this.temp_collection.each(this._addItem, this);
+            }
         },
 
         _addItem : function(  item ) {
@@ -75,21 +78,19 @@ define(function (require) {
 
         _template: function( model )
         {
-
-
-
             var template_name = model.page_id.get('template'),
                 tabshtml = $('<div class="columns small-8"><dl class="tabs" data-tab><dd class="active"><a href="#panel_meta">meta</a></dd></dl><div class="tabs-content"><div class="content active" id="panel_meta"><div class="panel"><div class="container"></div><a class="button green addmeta">+ Add metadata</a></div></div></div></div>'),
                 fields, tabs,
                 self = this;
 
-            this.temp_collection = new PageExtends(  );
+            this.temp_collection = new PageExtends( );
 
             this.templates = ntdst.api.modelFactory( 'templates' );
-            this.tpl = this.templates.where({name:template_name})[0];
+            this.tpl = this.templates.where({label:template_name})[0];
 
             if( this.tpl != undefined ) {
                 tabs = this.tpl.getTabs();
+
 
                 _.each( tabs, function(item) {
                     tabshtml.find('dl.tabs').append('<dd><a href="#panel_'+item+'">'+item+'</a></dd>');

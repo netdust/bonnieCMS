@@ -39,6 +39,8 @@ define(function (require) {
                 this.subviews = {};
             }
 
+            console.log( this.model );
+
             this.subviews = {
                 '.data' : this.metaform
             };

@@ -7,7 +7,7 @@ define(function (require) {
     var $                   = require('jquery'),
         Base                = require('app/module/pages/view/Page'),
 
-        SortList            = require('sortablelist');
+        SortList            = require('nestedSortable');
 
     return Base.extend({
 
@@ -41,6 +41,7 @@ define(function (require) {
                     }, 300);
                 }
             });
+
 
             if( this.model.get('page').length > 0 ) {
                 this.media();

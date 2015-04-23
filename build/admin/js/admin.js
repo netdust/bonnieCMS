@@ -58,9 +58,6 @@ require.config({
 
     shim: {
 
-        'jquery-ui': {
-            deps: ['jquery']
-        },
         'underscore': {
             exports: '_'
         },
@@ -89,12 +86,6 @@ require.config({
             deps: ['jquery']
         },
 
-        'jquery-ui/sortable': {
-            deps: ['jquery-ui']
-        },
-        'sortablelist': {
-            deps: ['jquery-ui','jquery-ui/sortable']
-        },
         'spinner': {
             deps: ['jquery']
         },

@@ -1,9 +1,9 @@
 <?php
 
-namespace plugins\analytics;
+namespace data\plugins\analytics;
 
 use Slim\Slim;
-use api\controller\PageController;
+use \controller\PageController;
 
 
 class Plugin extends \Slim\Middleware {

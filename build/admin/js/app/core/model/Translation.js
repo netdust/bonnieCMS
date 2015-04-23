@@ -43,6 +43,7 @@ define(function (require) {
         },
 
         initialize: function () {
+
         }
 
     });

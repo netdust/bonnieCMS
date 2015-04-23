@@ -61,7 +61,7 @@ define(function (require) {
         initialize: function(options) {
             options.schema.options = function(callback, editor) {
                 callback(  ntdst.api.modelFactory('pages').getOptionList() );
-            };
+            };;
             editors.Select.prototype.initialize.call(this, options);
         },
 
@@ -265,7 +265,7 @@ define(function (require) {
         initialize: function(options) {
             editors.Base.prototype.initialize.call(this, options);
 
-            this.path = 'attachment'; // 0 makes sure file is saved as meta, not as asset in the DB
+            this.path = ntdst.api.state.module()+'/upload'; // page/id/upload
 
             this.$input = _.template('\
                 <div class="row upload">\
@@ -277,7 +277,10 @@ define(function (require) {
                         </div>\
                     </div>\
                     <div class="columns small-4 editor">\
-                        <a href="#" class="button file">Select</a>\
+                        <a href="#" class="button file">\
+                        <i class="fa fa-refresh fa-spin fa-fw"></i>\
+                        Select\
+                        </a>\
                     </div>\
                 </div>'
             );
@@ -324,27 +327,30 @@ define(function (require) {
                         {
                             url:ntdst.options.api+_editor.path,
                             clickable:'.'+_editor.random +' .button.file',
-                            previewTemplate:'<div class="row dz-preview"><div class="dz-progress-spinner" role="progressbar"></div><div class="dz-error-message"><span data-dz-errormessage></span></div></div>',
+                            previewTemplate:'<div class="row dz-preview"><div class="dz-error-message"><span data-dz-errormessage></span></div></div>',
                             maxFiles:1,
                             init:function() {
-
                                 $('.'+_editor.random +' .preview').click(function() {
-                                    window.open(base + '/data/upload/' + _editor.value,"resizeable,scrollbar");
+                                    window.open(base +'/'+_editor.getValue(),"resizeable,scrollbar");
                                 });
                                 if( _editor.value!= '') {
                                     _editor.setValue(_editor.value);
                                 }
-
+                            },
+                            params:{
+                                "dir":"attachments/"
                             }
                         }
                     )
                     .on("addedfile", function() {
-                        if (this.files[1]!=null){
-                            this.removeFile(this.files[0]);
-                        }
+                            $('.'+_editor.random +' .button.file .fa').show();
+                            if (this.files[1]!=null){
+                                this.removeFile(this.files[0]);
+                            }
                     })
-                    .on("success", function( resp ) {
-                         _editor.setValue( resp.name );
+                    .on("success", function( resp, o ) {
+                            $('.'+_editor.random +' .button.file .fa').hide();
+                            _editor.setValue( o.template );
                     });
 
                 }

@@ -30,7 +30,8 @@ define(function (require) {
         },
 
         initialize: function( options ) {
-            this.settings = options.settings; // parend model
+            this.settings = options.settings; // parent model
+
             this.listenTo(this.settings, 'change:field', this.render );
             return FormView.prototype.initialize.apply(this, arguments);
         },
@@ -51,6 +52,18 @@ define(function (require) {
             var _o = this.model.schema.value;
             _o.type = this.settings.get('field').charAt(0).toUpperCase() + this.settings.get('field').slice(1);
 
+            // check if it is a dynamic contenttype
+            var _ct = ntdst.api.modelFactory('contenttypes');
+            if( _ct.hasType( _o.type ) ){
+                // we'll need to set the first item of the contenttypes as main view
+                // _ct = _ct.getType( _o.type );
+                // _o.type = _ct.get('meta')[0].type;
+            }
+
+            // help a little
+            if( this.settings.get('field') == 'textarea' ) {
+                _o.type = 'TextArea';
+            }
             // make sure lists are arrays, not json
             if( this.settings.get('field') == 'list' ){
                 var val = this.model.get('value');
@@ -97,8 +110,17 @@ define(function (require) {
         },
 
         updateField: function( e ) {
-            var clss = e.target.className.split(' ')[1];
-            this.settings.set('field', clss);
+
+            if( e.target.className.indexOf("contenttype") > -1 ) {
+
+            }
+            else {
+                var classes = e.target.className.split(' ');
+                var clss = classes[classes.length-1];
+
+                this.settings.set('field', clss);
+            }
+
         },
 
         toSlug: function(st){

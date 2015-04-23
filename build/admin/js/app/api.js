@@ -34,9 +34,7 @@ define(function (require) {
             AppBootstrap["modules"]
         );
 
-        ntdst.models['i18n'] = new LanguageModel({
-            language:ntdst.options['i18n.default']
-        });
+        ntdst.models['i18n'] = new LanguageModel();
 
         // init main layout
         ntdst.$layout = new MasterView(
@@ -51,9 +49,11 @@ define(function (require) {
 
     ntdst.start = function()
     {
-        Backbone.history.start({
-            pushState:ntdst.options.pushState,
-            root:ntdst.options.root
+        _.defer(function() {
+            Backbone.history.start({
+                pushState:ntdst.options.pushState,
+                root:ntdst.options.root
+            });
         });
         return ntdst;
     };
@@ -70,7 +70,6 @@ define(function (require) {
             $( selector ).append( "<div class='container'>" );
 
             ntdst.$layout.assign( selector+' .container', view  );
-
         },
 
         navigate: function (path) {
@@ -83,7 +82,6 @@ define(function (require) {
         },
 
         modelFactory: function( key, _package, _data ) {
-            console.log( 'searching for model ' + key );
             if( ntdst.models[key] ) return ntdst.models[key];
             return ntdst.models[key] = new _package( _data, {parse: true} );
         },
@@ -93,7 +91,7 @@ define(function (require) {
         },
 
         hasPermission: function( perm ) {
-            return ntdst.api.modelFactory( 'user').hasPermission( perm );
+            return ntdst.api.modelFactory('user').hasPermission( perm );
         },
 
 
@@ -108,58 +106,42 @@ define(function (require) {
             }
         },
 
-        // notif
-
-        notification: {
-            show: function( message, type, el )
-            {
-                if(_.isEmpty(type)) type= "info";
-                if(_.isEmpty(el)) el = "#main #contents";
-                var tmpl =  '<div data-alert class="alert-box '+type+'">'+message+'<a href="#" class="close">&times;</a></div>';
-                $(el).prepend(tmpl);
-                $(el).foundation();
-
-                if( el ==  "#main #contents" ) {
-                    $('#main').removeClass('closed');
-                }
-            },
-            clear:function() {
-                $('.alert-box').remove();
-            }
-        },
-
         findTemplates: function( model ) {
+            var templates = ntdst.api.modelFactory( 'templates' );
             if( model.get('parent') != null ) {
-                var templates = ntdst.api.modelFactory( 'templates' );
                 var template = templates.where( {name: model.get('parent').get('template') } )[0];
                 if( template.get('children') != undefined ) {
                     return template.get('children').split(',');
                 }
             }
-            else
-            return $.parseJSON(ntdst.options.templates);
+            else {
+
+                return templates.getNames();
+            }
+
         },
 
         createLanguage: function( view ){
             var _lg = FormView.extend({
                 template: _.template( '<div data-fields="language"></div>' ),
                 remove:function() {
-                    this.model.set('language',ntdst.options['i18n.default']);
+                    this.model.set('language',ntdst.options['languages'][0]);
                     FormView.prototype.remove.apply(this, arguments);
                 }
             });
             view.addView( {'.language':  new _lg({model:ntdst.api.modelFactory('i18n')}) } );
         },
 
+
         createEpic: function( name, options  )
         {
             var myEpic = new EpicEditor( {
                 clientSideStorage:false,
-                basePath: base + "/admin/css",
+                basePath: base + "/admin/css/epic",
                 theme: {
-                    base: '/epic/application.min.css'
-                    , preview: '/epic/application.min.css'
-                    , editor: '/epic/application.min.css'
+                    base: '/base/epiceditor.min.css'
+                    , preview: '/preview/github.min.css'
+                    , editor: '/editor/epic-light.min.css'
                 },
                 file: {
                     name: name,
@@ -205,7 +187,6 @@ define(function (require) {
                 el,
                 _.extend( {
                     addRemoveLinks: false
-
                 }, options)
 
             );

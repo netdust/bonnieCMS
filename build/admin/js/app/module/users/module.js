@@ -31,9 +31,16 @@ define(function (require) {
                 var view  = ntdst.api.viewFactory( 'userlist', Users, {model:_model} );
                 ntdst.api.show( '#app', view );
 
-                _model.fetch(
-                    {reset:true, error: function() { console.log(arguments); } }
-                );
+                this.listenTo(view, 'create', function() {
+                    this.stopListening( view );
+                    ntdst.api.navigate( 'user/create', true );
+                });
+
+                this.listenTo(view, 'show', function() {
+                    this.stopListening( view );
+                    //ntdst.api.navigate( 'user/create', true );
+                    console.log( 'ok' );
+                });
             },
 
             createUser: function () {
@@ -54,7 +61,9 @@ define(function (require) {
 
             data:function( bootstrap ) {
                 if( bootstrap != undefined ) {
-                    return ntdst.api.modelFactory( 'user', Model.user, bootstrap );
+                    var users = ntdst.api.modelFactory( 'users', Model.userCollection, bootstrap );
+                    ntdst.models['user'] =  users.where({email: ntdst.options.user})[0];
+                    return users;
                 }
             }
 

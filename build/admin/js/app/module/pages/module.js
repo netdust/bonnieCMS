@@ -57,7 +57,7 @@ define(function (require) {
 
                 this.listenTo(view, 'afterrender', function() {
                     this.stopListening(view, 'afterrender');
-                    $('#main').removeClass('closed');
+                    $('#app').removeClass('closed');
                 });
 
                 this.listenTo(_m, 'sync', function() {

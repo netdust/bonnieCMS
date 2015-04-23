@@ -121,16 +121,27 @@ define(function (require) {
                 var errors = this.model.validate();
                 if(_.isEmpty(errors))
                 {
-                    // merge temp models and then save;
-                    if( this.extend_view.temp_collection != undefined ) {
-                        this.model.get('page_meta').add( this.extend_view.temp_collection.toJSON() , {silent:true} );
+                    var self = this;
+                    // merge temp models and then save; remove temp after save
+                    if( self.extend_view.temp_collection != undefined ) {
+                        self.model.get('page_meta').add(
+                            self.extend_view.temp_collection.toJSON(),
+                            {silent:true}
+                        );
                     }
 
-                    this.model.updatePage();
-                    ntdst.api.notification.clear();
+                    self.model.updatePage({
+                        success: function (model, response) {
+                            if( self.extend_view.temp_collection != null ) {
+                                self.extend_view.temp_collection.reset();
+                                self.extend_view.temp_collection = null;
+                            }
+                            self.renderTranslations();
+                        }
+                    });
                 }
                 else {
-                    ntdst.api.notification.show("Not all fields are filled in like they should, have a look: " + JSON.stringify(errors), 'alert' );
+                    Backbone.trigger('notification', { message: 'Not all fields are filled in like they should, have a look', type: 'warning' });
                 }
             }
         },

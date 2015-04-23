@@ -17,11 +17,12 @@ define(function (require) {
         template: _.template(tpl),
 
         toggleMeta: function() {
-            $('#main').toggleClass('closed');
+            $('#app').toggleClass('closed');
         },
 
-        initialize: function() {
-            BaseView.prototype.initialize.apply(this, arguments);
+
+        beforeRender: function() {
+            $('#app').addClass( 'closed' );
         },
 
         afterRender: function() {
@@ -29,7 +30,7 @@ define(function (require) {
         },
 
         onClose: function() {
-            $('#main').removeClass( 'closed' );
+            $('#app').removeClass( 'closed' );
         }
 
     });

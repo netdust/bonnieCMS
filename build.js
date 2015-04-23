@@ -9,7 +9,7 @@
 
     , appDir: './src/www/admin/js'
     , baseUrl: "./"
-    , dir: './build/admin/js'
+    , dir: './dist/bonnie/admin/js'
 
     , fileExclusionRegExp: /^(r|build)\.js$/
     , optimizeCss: 'standard'
@@ -20,6 +20,7 @@
         'jquery'                    : "../../../_system/bower/jquery/dist/jquery",
         'jquery-ui'                 : "../../../_system/bower/jquery-ui/jquery-ui",
         'jquery-ui/sortable'        : "../../../_system/bower/jquery-ui/ui/sortable",
+
         'backbone'                  : "../../../_system/bower/backbone/backbone",
         'backbone.subroute'         : '../../../_system/bower/backbone.subroute/backbone.subroute',
         'backbone-forms'            : '../../../_system/bower/backbone-forms/distribution.amd/backbone-forms',
@@ -30,32 +31,16 @@
         'foundation'                : '../../../_system/bower/foundation/js/foundation',
         'dropzone'                  : '../../../_system/bower/dropzone/dist/dropzone-amd-module',
         'epiceditor'                : '../../../_system/bower/epiceditor/epiceditor/js/epiceditor',
-        'sortablelist'              : '../../../_system/bower/nestedSortable/jquery.ui.nestedSortable',
         'listeditor'                : '../../../_system/bower/backbone-forms/distribution.amd/editors/list',
+        'sortablelist'              : '../../../_system/bower/nestedSortable/jquery.ui.nestedSortable',
         'spinner'                   : '../../../_system/bower/spin.js/spin'
     }
 
     , shim: {
 
-        'jquery-ui': {
-            deps: ['jquery']
-        },
         'underscore': {
             exports: '_'
         },
-        'backbone-relational': {
-            deps: ['backbone']
-        },
-        'backbone-forms': {
-            deps: ['backbone']
-        },
-        'backbone.subroute': {
-            deps: ['backbone']
-        },
-        'app/core/helper/editors': {
-            deps: ['backbone']
-        },
-
         'backbone': {
             deps: ['underscore', 'jquery'],
             exports: 'Backbone'
@@ -68,14 +53,6 @@
         },
         'dropzone': {
             deps: ['jquery']
-        },
-
-        'jquery-ui/sortable': {
-            deps: ['jquery-ui']
-        },
-
-        'sortablelist': {
-            deps: ['jquery-ui','jquery-ui/sortable']
         },
         'spinner': {
             deps: ['jquery']

@@ -20,6 +20,11 @@ define(function (require) {
 
     return Backbone.RelationalModel.extend({
 
+        /*
+        urlRoot: function() {
+            return ntdst.options.api+ntdst.api.state.module() + "/meta";
+        },*/
+
         urlRoot: ntdst.options.api + "pagemeta",
 
         relations: [

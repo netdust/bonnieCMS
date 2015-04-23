@@ -1,7 +1,7 @@
 // ==== CONFIGURATION ==== //
 
 // Project paths
-var project     = 'netcms'
+var project     = 'bonnie'
   , src         = './src/'
   , build       = './build/'
   , dist        = './dist/'+project+'/'
@@ -16,10 +16,11 @@ module.exports = {
         library: {
             src: [bower+'requirejs/require.js']
             , dest: build+'admin/js/lib/'
+            , dist: dist+'admin/js/lib/'
         }
         , build: {
             src: [src + 'www/admin/js/**/*.js']
-            , dest: build+'admin/js/lib/'
+            , dest: build+'admin/js/'
         }
         , lint: {
             src: [src + 'www/admin/js/**/*.js'] // Lint core scripts (for everything else we're relying on the original authors)
@@ -28,7 +29,10 @@ module.exports = {
 
     styles: {
         build: {
-            src: src+'www/admin/css/**/*.css'
+            src: [
+                src+'www/admin/css/import.css'
+                , src+'www/admin/css/style.css'
+            ]
             , dest: build+"admin/css"
         }
         , dist: {
@@ -37,11 +41,11 @@ module.exports = {
             , dest: dist+"admin/css/"
         }
         , autoprefixer: { browsers: ['> 3%', 'last 2 versions', 'ie 9', 'ios 6', 'android 4'] }
-        , rename: { suffix: '.min' }
-        , minify: { keepSpecialComments: 1, roundingPrecision: 3, relativeTo:src }
-    },
+        , rename: { basename: "style", suffix: '.min' }
+        , minify: { keepSpecialComments: 1, roundingPrecision: 3, relativeTo:src+"www/admin" }
+    }
 
-    images: {
+    , images: {
         build: { // Copies images from `src` to `build`; does not optimize
             src: [src+'www/**/*(*.png|*.jpg|*.jpeg|*.gif)']
             , dest: build
@@ -57,17 +61,37 @@ module.exports = {
         }
     }
 
+    , fonts: {
+        build: { // Copies fonts from `src` to `build`; does not optimize
+            src: [src+'www/**/*(*.eot|*.woff|*.oft|*.svg)']
+            , dest: build
+        }
+        , dist: {
+            src: [build+'**/*(*.eot|*.woff|*.oft|*.svg)']
+            , dest: dist
+        }
+    }
+
+    // copy all remaining files to the build folder
+    , theme: {
+        build: { // Copies fonts from `src` to `build`; does not optimize
+            src:[src+'www/**/*', src+'www/.htaccess', '!'+src+'www/**/*(*.js|*.css)', '!'+src+'www/**/*(*.png|*.jpg|*.jpeg|*.gif)', '!'+src+'www/**/*(*.eot|*.woff|*.oft|*.svg)']
+            , dest: build
+        }
+        , dist: {
+            src:[build+'**/*', build+'.htaccess', '!'+build+'**/*(*.js|*.css)', '!'+build+'**/*(*.png|*.jpg|*.jpeg|*.gif)', '!'+build+'**/*(*.eot|*.woff|*.oft|*.svg)']
+            , dest: dist
+        }
+    }
+
     , composer: {
         src: [composer+'**/*.php', '!'+composer+'**/docs/**', '!'+composer+'**/test/**', '!'+composer+'**/tests/**' ]
         , dest: build+'system/vendor/'
     }
 
-    , theme: {
-        src:[src+'www/**/*(*.html|*.tpl|*.php|*.eot|*.woff|*.oft|*.svg)', '!'+src+'www/public/**/*']
-        , dest: build
-    },
 
-    browsersync: {
+
+    , browsersync: {
         files: [build+'/**', '!'+build+'/**.map'] // Exclude map files
         , notify: false // In-line notifications (the blocks of text saying whether you are connected to the BrowserSync server or not)
         , open: true // Set to false if you don't like the browser window opening automatically

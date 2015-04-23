@@ -7,11 +7,11 @@ define(function (require) {
         BaseView            = require('app/core/view/BaseView'),
 
         StringHelper        = require('app/core/helper/string'),
-
-        template            = _.template( '<i data-path="<%= path %>" class="fa fa-<%= lowercase( icon ) %>" />');
+        tpl                 = require('app/templates');
 
     return BaseView.extend({
 
+        template : tpl.navitem,
         tagName: "li",
 
         events: {
@@ -24,7 +24,7 @@ define(function (require) {
 
         render: function ()
         {
-            this.$el.html( template( _.extend( this.model.toJSON(), StringHelper ) ) );
+            this.$el.html( this.template( _.extend( this.model.toJSON(), StringHelper ) ) );
             return this;
         },
 
