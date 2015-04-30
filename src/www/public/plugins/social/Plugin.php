@@ -1,6 +1,6 @@
 <?php
 
-namespace data\plugins\social;
+namespace plugins\social;
 
 use Slim\Slim;
 use \controller\PageController;
@@ -14,20 +14,21 @@ class Plugin extends \Slim\Middleware {
 
     protected $settings;
 
-    function __construct() {
+    function __construct( $config ) {
+        $this->settings = $config;
     }
 
     public function call()
     {
 
         $app = Slim::getInstance();
-        $app->plugins = array_merge($app->plugins, array(
-            __NAMESPACE__ => $this
-        ));
+        $this->app->container->singleton(__NAMESPACE__, function () {
+            return $this;
+        });// make them available for other classes */
 
         $hook = function ( $app ) {
 
-            $plugin = $app->plugins[__NAMESPACE__];
+            $plugin = $this->app->container->get(__NAMESPACE__);
 
             return function () use ( $app, $plugin )
             {
@@ -39,7 +40,7 @@ class Plugin extends \Slim\Middleware {
                 $app->page->url         = $app->request()->getUrl() .$app->request()->getScriptName().'/'.$app->config('i18n.locale');
 
                 $page  = $app->page->get_array();
-                $page['image'] = $app->request->getUrl() . \Slipp\Helper\Util::to( 'data/upload/' . $page['image'] );
+                $page['image'] = $app->request->getUrl() . \helpers\Util::to( 'data/upload/' . $page['image'] );
 
                 $meta  = $plugin->facebook();
 
@@ -50,18 +51,18 @@ class Plugin extends \Slim\Middleware {
 
         $script = function ( $app ) {
 
-            $plugin = $app->plugins[__NAMESPACE__];
+            $plugin = $this->app->container->get(__NAMESPACE__);
 
             return function () use ( $app, $plugin )
             {
-                echo $plugin->facebook_embed( $this->settings['id'] );
+                echo $plugin->facebook_embed( $this->settings->id );
             };
 
         };
 
         $body = function ( $app ) {
 
-            $plugin = $app->plugins[__NAMESPACE__];
+            $plugin = $this->app->container->get(__NAMESPACE__);
 
             return function () use ( $app, $plugin )
             {
@@ -72,9 +73,9 @@ class Plugin extends \Slim\Middleware {
 
         $app->hook( 'header', $hook( $app ) );
 
-        $this->settings = json_decode( $app->config('social'), true );
 
-        if( $this->settings && array_key_exists( 'id', $this->settings ) && $this->settings['id'] != ''  ){
+
+        if( isset( $this->settings ) && isset( $this->settings->id ) && $this->settings->id != ''  ){
             $app->hook( 'script', $script( $app ) );
             $app->hook( 'render.after.body', $body( $app ) );
         }
@@ -129,7 +130,7 @@ class Plugin extends \Slim\Middleware {
         }
         else {
 
-            return !array_key_exists( $meta, $this->settings ) ? 'no value' : $this->settings[$meta];
+            return !isset( $this->settings->meta ) ? 'no value' : $this->settings->meta;
         }
 
     }

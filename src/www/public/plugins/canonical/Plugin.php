@@ -1,6 +1,6 @@
 <?php
 
-namespace data\plugins\canonical;
+namespace plugins\canonical;
 
 use Slim\Slim;
 use \controller\PageController;
@@ -8,25 +8,23 @@ use \controller\PageController;
 
 class Plugin extends \Slim\Middleware {
 
-    /**
-     * @param array $config
-     */
-    function __construct($config = null)
-    {
+    protected $settings;
 
+    function __construct( $config ) {
+        $this->settings = $config;
     }
 
     public function call()
     {
 
         $app = Slim::getInstance();
-        $app->plugins = array_merge($app->plugins, array(
-            __NAMESPACE__ => $this
-        ));
+        $this->app->container->singleton(__NAMESPACE__, function () {
+            return $this;
+        });// make them available for other classes */
 
         $hook = function ( $app ) {
 
-            $plugin = $app->plugins[__NAMESPACE__];
+            $plugin = $this->app->container->get(__NAMESPACE__);
 
             return function () use ( $app, $plugin )
             {

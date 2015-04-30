@@ -4,6 +4,34 @@ namespace helpers;
 
 class Util {
 
+    #helpers
+    public static function hook($h) {
+        $app = \Slim\Slim::getInstance();
+        $app->applyHook($h);
+    }
+
+    public static function config($c) {
+        $app = \Slim\Slim::getInstance();
+        echo $app->config($c);
+    }
+
+    public static function i18n($key=null) {
+
+    }
+
+    #page(s)
+    public static function sort_pages( &$pages, $field, $order='ASC' ) {
+        usort( $pages, self::build_sorter($field, $order) );
+    }
+
+    protected  static function build_sorter($key, $order) {
+        return function ($a, $b) use ($key, $order) {
+            return $order=='ASC'
+                ? strcmp($a->{$key}, $b->{$key})
+                : strcmp($b->{$key}, $a->{$key});
+        };
+    }
+
     public static function url() {
         $app = \Slim\Slim::getInstance();
         return  $app->request->getUrl();

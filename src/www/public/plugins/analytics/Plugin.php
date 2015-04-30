@@ -1,6 +1,6 @@
 <?php
 
-namespace data\plugins\analytics;
+namespace plugins\analytics;
 
 use Slim\Slim;
 use \controller\PageController;
@@ -8,37 +8,31 @@ use \controller\PageController;
 
 class Plugin extends \Slim\Middleware {
 
-    /**
-     * @var array
-     */
+
     protected $settings;
 
-    /**
-     * @param array $settings
-     */
-    public function __construct()
-    {
-
+    function __construct( $config ) {
+        $this->settings = $config;
     }
 
     public function call()
     {
         $app = Slim::getInstance();
-        $app->plugins = array_merge($app->plugins, array(
-            __NAMESPACE__ => $this
-        ));
+        $this->app->container->singleton(__NAMESPACE__, function () {
+            return $this;
+        });// make them available for other classes */
 
         $hook = function ( $app, $settings ) {
-            $plugin = $app->plugins[__NAMESPACE__];
+            $plugin = $this->app->container->get(__NAMESPACE__);
+
             return function () use ( $app, $plugin, $settings )
             {
-                echo $plugin->google( $settings['id'], \api\Util::host() );
+                echo $plugin->google( $settings->ga, \helpers\Util::host() );
             };
         };
 
-        $this->settings = json_decode( $app->config('analytics'), true );
 
-        if( $this->settings && array_key_exists( 'id', $this->settings ) ){
+        if( isset($this->settings) && isset( $this->settings->ga ) ){
             $app->hook( 'script', $hook( $app, $this->settings ) );
         }
         $this->next->call();
