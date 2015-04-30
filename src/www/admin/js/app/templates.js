@@ -6,10 +6,12 @@ define(function (require) {
 
     return {
 
-        master : _.template('<div class="loader"><i class="fa fa-refresh fa-spin" /></div><div class="wrapper"><section id="sidebar" ></section><section id="main" role="main"><div class="row"><form class="custom"><div class="columns small-12" id="app"></div> </form></div> <footer id="footer" role="contentinfo"></footer></section></div>'),
+        master : _.template( require('text!app/tpl/master.html')  ),
 
         navigation: _.template('<nav id="nav" role="navigation"></nav>'),
-        navitem: _.template('<i data-path="<%= path %>" class="fa fa-<%= lowercase( icon ) %>" />')
+        navitem: _.template('<i data-path="<%= path %>" class="fa fa-<%= lowercase( icon ) %>" />'),
+
+        login: _.template( require('text!app/tpl/login.html') )
 
     };
 

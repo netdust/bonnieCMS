@@ -42,7 +42,7 @@ class Util {
 
     protected  static function _path($asset, $item) {
         $app = \Slim\Slim::getInstance();
-        return  self::to( 'public/themes/' . $app->config('theme'). '/' . $asset. '/' . $item );
+        return  self::to( 'public/themes/' . $app->config('theme')->theme. '/'.  $asset. '/' . $item );
     }
 
     public static function to($uri) {

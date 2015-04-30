@@ -36,6 +36,23 @@ h1, h2, h3, h4, h5, h6 { font-family: 'Dosis', sans-serif; font-weight: 300;  co
 #main #meta{ margin-bottom:10px;}
 #main .header{ background: #FFF;height:95px; padding: 0 1.2em; padding-right: 0;}
 
+#main .login-wrapper {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.43);
+    z-index: 9999;
+    height: 100vh;
+}
+
+#main .login-wrapper .login-box {
+    position: relative;
+    margin: 0 auto;
+    width: 50%;
+    margin-top: 5em;
+}
+
 
 #main .data{ padding: 1.25em 1.25em 1.25em 1.2em; background-color: #F0F1F3; box-shadow: 0 5px 2px -2px rgb(186, 186, 186);}
 

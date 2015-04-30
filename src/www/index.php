@@ -10,37 +10,29 @@ require(__ROOT__.'/system/api/Routes/Api.php');
 $app->hook('slim.before.dispatch', function () use ($app)
 {
 
-    if( !strpos($_SERVER['REQUEST_URI'],'admin') )
+    if( !strpos($_SERVER['REQUEST_URI'],'cms') )
     {
+        $app->applyHook('before.page');
+
+
         $param = $app->router->getCurrentRoute()->getParams();
 
-        $uri = !isset($param['slug'])
-            ? \api\Controller\PageController::getPage($app->config('homepage'))->slug
-            : $param['slug'];
-
-        $app->applyHook('render.before.page');
-
-        $app->page = \api\CMS::get_page( $uri );
+        $uri = isset($param['slug']) ? $param['slug'] : \api\Controller\PageController::getPage($app->config('theme')->home)->slug;
+        $app->page = \api\Controller\PageController::slug( explode('/', $uri) );
 
         if( $app->page == null ) {
             $app->notFound();
             exit();
         }
 
-        $app->applyHook('render.after.page');
+        $app->applyHook('after.page');
 
 
         $templateData = array(
 
             'page' => $app->page->get_array(),
 
-
-            'site' => array(
-                'title' => $app->config('sitename'),
-                'keywords' => $app->config('keywords'),
-                'description' => $app->config('description'),
-                'copyright' => $app->config('copyright')
-            ),
+            'site' => $app->config('theme'),
 
             'loc' => array(
                 'url' => $app->request()->getUrl() .$app->request()->getScriptName(),
@@ -48,11 +40,14 @@ $app->hook('slim.before.dispatch', function () use ($app)
                 'hostname' => $app->request()->getHost(),
                 'root' => __ROOT__.'public/',
                 'path' => $app->request()->getScriptName(),
-                'theme' => __ROOT__.'public/themes/'.$app->config('theme').DS
+                'theme' => __ROOT__.'public/themes/'.$app->config('theme')->theme.DS
             ),
 
             'lang' => $app->config('i18n.locale'),
+
         );
+
+        $app->applyHook('before.data');
 
         $app->view()->appendData( $templateData );
     }

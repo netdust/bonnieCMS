@@ -121,4 +121,5 @@ function require_all($mod) {
 }
 
 class ResourceNotFoundException extends \RuntimeException{}
+
 class FileUploadException extends \Exception{}

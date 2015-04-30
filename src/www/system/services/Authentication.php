@@ -23,11 +23,13 @@
 
 namespace services;
 
+class AuthenticationException extends \Exception{}
+
 class Authentication {
 
     private $identity;
     private $password;
-	private $error;
+	private $remember;
 	private $hash_method;				// IMPORTANT: Make sure this is set to either sha1 or bcrypt
 	private $default_rounds = 8;		// This does not apply if random_rounds is set to true
 	private $random_rounds  = FALSE;
@@ -37,7 +39,7 @@ class Authentication {
 	private $bcrypt;
 	private $salt_length  	= 10;
 
-	public function __construct($identity = '', $password = '', $hash_method='bcrypt') {
+	public function __construct($identity = '', $password = '', $remember=false, $hash_method='bcrypt') {
         //if identity is the email.. implementing only email for now`
 		if (!empty($identity)) {
 			$this->identity = filter_var(stripslashes(trim($identity)), FILTER_SANITIZE_EMAIL);
@@ -45,6 +47,7 @@ class Authentication {
 		if (!empty($password)) {
             $this->password= $password;
         }
+        $this->remember= $remember;
 		$this->hash_method = $hash_method;
 		if ($this->hash_method == 'bcrypt') {
 			if ($this->random_rounds){
@@ -58,111 +61,143 @@ class Authentication {
     }
 
     public function getUser(){
-        $user = \ORM::for_table('cms_user')->where('email',$this->identity)->find_one();  //Depending on what the user wants, it could be username or email
-        if (empty($user)){
-            $this->error = "Email not found";
+
+        if(!filter_var($this->identity, FILTER_VALIDATE_EMAIL)){
             return FALSE;
         }
-        return $user->as_array();
+
+        $user = \Model::factory('User')->where('email', $this->identity); //\ORM::for_table('cms_user')->where('email',$this->identity);
+        if ($user->count()==0){
+            return FALSE;
+        }
+
+        return $user->find_one();
     }
 
 	public function getIdentity(){
 		return $this->identity;
 	}
+
 	public function getPassword(){
-		return $this->identity;
+		return $this->password;
 	}
+
 	public function isEmpty(){
 		if(empty($this->identity) || empty($this->password))
 			return true;
 		return false;
 	}
-	public function getError(){
-		return $this->error;
-	}
+
+    public function logout()
+    {
+        unset($_SESSION['user'] );
+        setcookie("login_remember", "", time()-3600);
+    }
+
 	/**
-	 * Hashes the password to be stored in the database.
-	 *
-	 * @return void
-	 * @author Mathew
-	 **/
-	public function hash_password($password)
-	{
-		if (empty($password)){
-			return FALSE;
-		}
-		//bcrypt
-		return $this->bcrypt->hash($password);
-	}
-	/**
-	 * Generates a random salt value for forgotten passwords or any other keys. Uses SHA1.
-	 *
-	 * @return void
-	 * @author Mathew
-	 **/
-	public function hash_password_sha1($password)
-	{
-		if (empty($password)){
-			return FALSE;
-		}
-		$salt = $this->salt();
-		return  $salt . substr(sha1($salt . $password), 0, -$this->salt_length);
-	}
-	/**
-	 * This function takes a password and validates it
-	 * against an entry in the users table.
-	 *
-	 * @return bool
-	 **/
-	public function validate_hash_password($hashed_password, $salt){
-		if (empty($hashed_password)){
-			return FALSE;
-		}
-		if ($this->bcrypt->verify($this->password,$hashed_password)){
-			return TRUE;
-		}
-		return FALSE;
-	}
-	/*  
-		This function assumes that $identity and $password are not null
-		Login function checks against user database for usernname then 
+		Login function checks against user database for username then
 		checks password wish encryption
 	*/
 	public function login()
 	{
-		if(!filter_var($this->identity, FILTER_VALIDATE_EMAIL)){
-			$this->error = "Email is not valid";
-			return FALSE;		
+        if( isset($_COOKIE['login_remember']) )
+        {
+            $credentials = explode( '|', $_COOKIE['login_remember'] );
+            $this->identity = $credentials[0];
+            $user = $this->getUser();
+
+            if( $user && $user->remember_code == $credentials[1] ) {
+                $user->last_login = time();
+                $user->remember_code = $this->key();
+                setcookie('login_remember', implode('|', array($this->identity,$user->remember_code)), time()+60*60*24*365 );
+                $user->save();
+                $_SESSION['user'] =  $user->as_array();
+                return $user;
+            }
+        }
+
+        $user = $this->getUser();
+        if( !$user ) {
+            throw new AuthenticationException("User not found");
+        }
+
+        if( $user->active == 0 ) {
+            throw new AuthenticationException("Account is not active");
+        }
+
+		if( !$this->validate_hash_password($user->password, $user->salt) ) {
+            throw new AuthenticationException("Unvalid password");
 		}
-		$user = \ORM::for_table('cms_user')->where('email',$this->identity)->find_one();  //Depending on what the user wants, it could be username or email
-		if (empty($user)){
-			$this->error = "Email not found";
-			return FALSE;
-		}
-		//successful username found, password test	
-		if ($this->validate_hash_password($user->password, $user->salt)){
-			if ($user->active == 0){
-				$this->error = "Account is not active";
-				return FALSE;
-			}
-			//Success!
-			$user->last_login = time();
-			return TRUE;
-		}
-		$this->error = "Password Incorrect.";
+
+        //Success!
+        $user->last_login = time();
+
+        if( $this->remember ) {
+            $user->remember_code = $this->key();
+            setcookie('login_remember', implode('|', array($this->identity,$user->remember_code)), time()+60*60*24*365 );
+        }
+
+        $user->save();
+        $_SESSION['user'] =  $user->as_array();
+
+        return $user;
+
 	}
-	/*
-		This function checks to see if the email is already in the database 
-		If email is not in the database, it is available and function returns true
-	*/
-	public function email_available()
-	{
-		$user = \ORM::for_table('cms_user')->where('email',$this->identity);
-		if($user->count()==0)
-			return true;
-		return false; 		//if email exists, then return false
-	}
-	
+
+    /**
+     * This function takes a password and validates it
+     * against an entry in the users table.
+     *
+     * @return bool
+     **/
+    public function validate_hash_password($hashed_password){
+        if (empty($this->password) || empty($hashed_password)){
+            return FALSE;
+        }
+        if ($this->bcrypt->verify($this->password,$hashed_password)){
+            return TRUE;
+        }
+        return FALSE;
+    }
+
+    /**
+     * Hashes the password to be stored in the database.
+     *
+     * @return void
+     * @author Mathew
+     **/
+    public function hash_password($password)
+    {
+        if (empty($password)){
+            return FALSE;
+        }
+        //bcrypt
+        return $this->bcrypt->hash($password);
+    }
+
+    /**
+     * Generates a random salt value for forgotten passwords or any other keys. Uses SHA1.
+     *
+     * @return void
+     * @author Mathew
+     **/
+    public function hash_sha1($key, $salt)
+    {
+        if (empty($key)){
+            return FALSE;
+        }
+        return  $salt . substr(sha1($salt . $key), 0, -$this->salt_length);
+    }
+
+    public function key()
+    {
+        $activation_code_part = openssl_random_pseudo_bytes(128);  //php >= 5.3
+        for($i=0;$i<1024;$i++) {
+            $activation_code_part = sha1($activation_code_part . mt_rand() . microtime());
+        }
+        return $this->hash_sha1($activation_code_part.$this->identity, $this->salt());
+    }
+
 	/**
 	 * Generates a random salt value.
 	 *
@@ -173,34 +208,38 @@ class Authentication {
 	{
 		return substr(md5(uniqid(rand(), true)), 0, 10); //10 is salt length
 	}
-	
-	/*
+
+    /**
+    This function checks to see if the email is already in the database
+    If email is not in the database, it is available and function returns true
+     */
+    public function email_available()
+    {
+        $user = \ORM::for_table('cms_user')->where('email',$this->identity);
+        return ($user->count()==0);
+    }
+
+	/**
 		This function creates a user 
 	*/
-	public function createUser($first_name, $last_name, $company = '', $phone = '', $group){
+	public function createUser($first_name, $last_name, $company = '', $phone = '', $group='admin'){
 		if(!filter_var($this->identity, FILTER_VALIDATE_EMAIL)){
-			$this->error = "Email is not valid";
-			return FALSE;		
+            throw new AuthenticationException("Email is not valid");
 		}
 		if(!filter_var($first_name, FILTER_SANITIZE_STRING)){
-			$this->error = "First name is not valid";
-			return FALSE;		
+            throw new AuthenticationException("First name is not valid");
 		}
 		if(!filter_var($last_name, FILTER_SANITIZE_STRING)){
-			$this->error = "Last name is not valid";
-			return FALSE;		
+            throw new AuthenticationException("Last name is not valid");
 		}
 		if(!empty($company) && !filter_var($company, FILTER_SANITIZE_STRING)){
-			$this->error = "Company name is not valid";
-			return FALSE;		
+            throw new AuthenticationException("Company name is not valid");
 		}
 		if(!empty($phone) && !filter_var($phone, FILTER_SANITIZE_STRING)){
-			$this->error = "Phone is not valid";
-			return FALSE;		
+            throw new AuthenticationException("Phone is not valid");
 		}
 		if(!$this->email_available()){
-			$this->error = "Email is already in use!";
-			return FALSE;
+            throw new AuthenticationException("Email is already in use!");
 		}
 		
 		$newUser = \ORM::for_table('cms_user')->create();
@@ -215,52 +254,33 @@ class Authentication {
 		$newUser->last_name = $last_name;
 		$newUser->phone = $phone;
 		$newUser->company = $company;
+		$newUser->role = $group;
 		$newUser->active = 1;
         $newUser->save();
-		if (!empty($group)){
-			$newgroup = \ORM::for_table('cms_users_groups')->create();
-			$newgroup->user_id = $newUser->id;
-			$newgroup->group_id = $group;
-            $newgroup->save();
-		}
+
 		return TRUE;
 	}
+
 	public function fogottenPassword() {
+
 		if($this->email_available()){
-			$this->error = "Email does not exist.";
-			return FALSE;
+            throw new AuthenticationException("Email does not exist");
 		}
-		//Add tons of randomness for the password link
-		$activation_code_part = openssl_random_pseudo_bytes(128);  //php >= 5.3
-		for($i=0;$i<1024;$i++) {
-			$activation_code_part = sha1($activation_code_part . mt_rand() . microtime());
-		}
-		$key = $this->hash_password_sha1($activation_code_part.$this->identity);
-		$user = \ORM::for_table('cms_user')->where('email',$this->identity)->find_one();
+
+        $key = $this->key();
+
+		$user = $this->getUser();
 		$user->forgotten_password_code = $key;
 		$user->forgotten_password_time = time();
         $user->save();
-		
-		/*if(!$this->mailTemplate("Email Test","this is a test email")){
-			//$this->error = "Could not send activation code. Please contact our technical support staff as soon as possible.";
-			return FALSE;
-		}*/
-		$message = "Line 1\r\nLine 2\r\nLine 3";
+
+		$message = "password recovery\r\ncode: $key\r\nLine 3";
 
 		// In case any of our lines are larger than 70 characters, we should use wordwrap()
 		$message = wordwrap($message, 70, "\r\n");
 		
 		// Send
-		mail('sean.alan.thomas@gamil.com', 'My Subject', $message);
-		return TRUE;
+        return mail($this->identity, 'password recovery', $message);
 	}
-	
-	public function mailTemplate($subject='', $body='', $headers='From: support@learnstructure.com') {
-    // Create the message body and subject
-    // Send the mail(s)
-    	new mail($this->identity, $subject, $body, $headers);
-    // Return true for success
-        return TRUE;
-    }
-		
+
 }

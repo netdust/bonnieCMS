@@ -7,38 +7,14 @@ class PageController extends \api\Controller\Controller
 
     /** STATIC INTERNAL API **/
 
-    public static function getPage( $id=0, $as_array = false )
+    public static function getPage( $id=0 )
     {
-        if( !$as_array ) return \Model::factory('Page')->find_one( $id );
-        else {
-            $c = new PageController();
-            return $c->_get($id);
-        }
+        $app = \Slim\Slim::getInstance();
+        $app->applyHook( 'page.get', $id );
+        return \Model::factory('Page')->find_one( $id );
     }
 
-    public static function getAll( $depth=null, $type='page', $status_not='trash' )
-    {
-        $status_not = explode( ',', $status_not );
-
-        if( is_numeric($depth)){
-            return \Model::factory('Page')->where('parent', $depth)->where('type', $type)->where_not_in( 'status', $status_not )->find_many();
-        }
-        return \Model::factory('Page')->where('type', $type)->where_not_in( 'status', $status_not )->find_many();
-    }
-
-    public static function getAll_as_array( $ref_id_only = true, $depth=null, $type='page', $status_not='trash' )
-    {
-        return array_map(
-            function( $model ) use ( $ref_id_only ) {
-                return static::__parse__page(
-                    $model, $ref_id_only
-                );
-            },
-            static::getAll( $depth, $type, $status_not )
-        );
-    }
-
-    public static function slug( $uri, $type=null, $include_trashed=false )
+    public static function slug( $uri, $type=null )
     {
         $slug = end($uri);
 
@@ -49,11 +25,15 @@ class PageController extends \api\Controller\Controller
         {
             $page = $translation->page()->find_one();
 
-            if( $page ) {
+            if( $page && ( ($type!=null && $page->type == $type ) || $type==null ) ) {
+
+                if( $page->relative() == implode('/', $uri) ) return $page;
+
+                // start looking for a match
                 $parent = $page->parent;
                 $segments = array($slug);
 
-                while( $parent  ) {
+                while( $parent ) {
                     $page = \Model::factory('Page')->where( 'id', $parent )->find_one();
                     $segments[] = $page->slug;
                     $parent = $page->parent;
@@ -61,10 +41,10 @@ class PageController extends \api\Controller\Controller
 
                 if( array_reverse($segments) === $uri ) {
                     $page = $translation->page()->find_one();
-                    if( ( ($type!=null && $page->type == $type ) || $type==null ) && $page->status != 'trash' ) {
-                        return $page;
-                        break;
-                    }
+                    $app = \Slim\Slim::getInstance();
+                    $app->applyHook( 'page.get', $page->id );
+                    return $page;
+                    break;
                 }
             }
         }
@@ -72,36 +52,7 @@ class PageController extends \api\Controller\Controller
         return null;
     }
 
-    public static function get_path( $slug, $lg=1 ) {
-
-        $translation = \Model::factory('PageTranslation')
-            ->where('language_id', $lg)
-            ->where('slug',$slug)
-            ->find_one();
-
-        if( $translation )
-        {
-            $page = $translation->page()->find_one();
-
-            if( $page ) {
-                $parent = $page->parent;
-                $segments = array($slug);
-
-                while( $parent  ) {
-                    $page = \Model::factory('Page')->where( 'id', $parent )->find_one();
-                    $segments[] = $page->slug;
-                    $parent = $page->parent;
-                }
-
-                $segments = array_reverse($segments);
-                return implode('/',$segments);
-            }
-        }
-    }
-
-
     /** PUBLIC API **/
-
 
     /**
      * @param $id
@@ -113,20 +64,18 @@ class PageController extends \api\Controller\Controller
     protected function _get( $id, $type='page', $param=array() ) // returns array
     {
         if( !$id ) {
+            $this->app->applyHook( $type.'.list', $id, $param );
             $query = \Model::factory('Page')->where('type', $type);
-            $query = $this->build_query( $query, $param );
+            $query = $this->_build_query( $query, $param );
             $arr = $query->find_array();
         }
         else {
-            $arr = \Model::factory('Page')->find_one( $id )->as_array();
+            $arr = self::getPage( $id )->as_array();
             $arr['page_translation'] = $this->_translation( $id );
             $arr['page_meta']  = $this->_meta( $id );
         }
-
         return $arr;
     }
-
-
 
     /**
      * @param $id
@@ -137,7 +86,9 @@ class PageController extends \api\Controller\Controller
      */
     protected function _meta( $id, $mid=0 ) // returns array
     {
-        $page = \Model::factory('Page')->find_one( $id );
+        $this->app->applyHook( 'page.meta', $id, $mid );
+
+        $page = self::getPage( $id );
         if( !$mid ) {
             return array_map( function( $meta ) {
                 $meta_arr = $meta->as_array();
@@ -157,7 +108,9 @@ class PageController extends \api\Controller\Controller
 
     protected function _translation( $id, $tid=0 ) // returns array
     {
-        $page = \Model::factory('Page')->find_one( $id );
+        $this->app->applyHook( 'page.translation', $id, $tid );
+
+        $page = self::getPage( $id );
         if( !$tid ) return $arr = $page->translations()->find_array();
         else {
             return $arr = $page->translations()->find_one($tid)->as_array();
@@ -171,9 +124,11 @@ class PageController extends \api\Controller\Controller
 
     public function sort( $id=0, $tid=0, $param=array() )
     {
+        $this->app->applyHook( 'page.sort', $id, $tid );
+
         $request = (array) json_decode($this->app->request()->getBody());
         foreach( $request as $item ) {
-            $r = \Model::factory('Page')->find_one($item->id);
+            $r = self::getPage($item->id);
             if( $r ) {
                 $r->sort = $item->sort;
                 $r->set_expr('modified', 'NOW()');
@@ -186,13 +141,17 @@ class PageController extends \api\Controller\Controller
 
     public function copy( $id=0, $tid=0, $param=array() )
     {
+        $this->app->applyHook( 'page.copy', $id, $tid );
+
         $request = $this->_get( $id );
         $this->_create( $request, true, true );
     }
 
     public function status( $id=0, $param=array() )
     {
-        $r = \Model::factory('Page')->find_one($id);
+        $this->app->applyHook( 'page.status', $id, $param );
+
+        $r = self::getPage( $id );
         if( $r ) {
             $r->status = $param['status'];
             $r->set_expr('modified', 'NOW()');
@@ -201,25 +160,31 @@ class PageController extends \api\Controller\Controller
         $this->get( $id );
     }
 
-    public function post()
+    public function post( $id, $param )
     {
+        $this->app->applyHook( 'page.post', $id, $param );
+
         $request = (array) json_decode($this->app->request()->getBody());
         $this->_create( $request, true, true, true );
     }
 
     public function put( $id )
     {
+        $this->app->applyHook( 'page.put', $id );
+
         $request = (array) json_decode($this->app->request()->getBody());
         $this->_create( $request, false, true, false );
     }
 
     public function patch( $id ) {
+        $this->app->applyHook( 'page.patch', $id );
         $this->put($id);
     }
 
     public function delete( $id )
     {
-        $r = \Model::factory('Page')->find_one($id);
+        $this->app->applyHook( 'page.delete', $id );
+        $r = self::getPage( $id );
         $r->status = 'trash';
         $r->save();
 
@@ -227,6 +192,8 @@ class PageController extends \api\Controller\Controller
     }
 
     public function upload( $id=0, $options=array() ) {
+
+        $this->app->applyHook( 'page.upload', $id );
 
         if( !$id ) throw new \ResourceNotFoundException( "Upload needs parent id" );
         if( $_FILES ) {
@@ -261,6 +228,7 @@ class PageController extends \api\Controller\Controller
         if( $clear_ids ) $data = $this->_clear_ids( $data ); // clear all id's, we can use it as a post object after that
         if( $sanitize ) $data = $this->_sanitize( $data );
 
+        $this->app->applyHook( 'page.create', $data );
 
         if( $isnew ) {
             $r = \Model::factory('Page')->create();
@@ -281,7 +249,7 @@ class PageController extends \api\Controller\Controller
 
         try {
             $r->save();
-            $this->save_related( $r, $data );
+            $this->_save_related( $r, $data );
         }
         catch( \Exception $e ) {
             throw new \Exception("error: ". $e->getMessage());
@@ -290,7 +258,7 @@ class PageController extends \api\Controller\Controller
         $this->get( $r->id );
     }
 
-    protected function save_related( $r, $request )
+    protected function _save_related( $r, $request )
     {
         foreach($request as $key => $model )
         {
@@ -311,6 +279,7 @@ class PageController extends \api\Controller\Controller
                     // set key values on related model;
                     foreach($item as $kkey => $vvalue )
                     {
+                        //todo: maybe add depth check here, if we are in level 3, we must ignore creation of new object/ i don't line hardcoding namespaces
                         if( $namespace == 'PageMetaTranslation' &&  is_array( $vvalue ) ){ // add lists
                             $relatedModel->{$kkey} = json_encode($vvalue);
                             $item->{$kkey} = null; // avoid object being created as model
@@ -325,7 +294,7 @@ class PageController extends \api\Controller\Controller
 
                     $relatedModel->save();
 
-                    $this->save_related( $relatedModel, $item );
+                    $this->_save_related( $relatedModel, $item );
                 }
             }
         }
@@ -357,7 +326,7 @@ class PageController extends \api\Controller\Controller
         return $request;
     }
 
-    protected function build_query( $query, $param ) {
+    protected function _build_query( $query, $param ) {
         $status = explode( ',', ( isset($param['state']) ? $param['state'] : null ) );
         $sort = ( isset($param['sort']) ? $param['sort'] : null );
 
@@ -377,33 +346,5 @@ class PageController extends \api\Controller\Controller
         }
         return $query;
     }
-    protected static function __parse__page( $page, $id_only = false ) {
-        $arr = array();
-
-        if( is_object ( $page ) )
-        {
-            $arr = $page->as_array();
-            $arr['page_translation'] = array_map( function( $model ) use( $id_only ){
-                return $id_only ? $model->id : $model->as_array();
-            }, $page->translations()->find_many() );
-
-            $arr['page_meta'] = array_map( function( $model ) use( $id_only )
-            {
-                if( $id_only ) return $model->id;
-                else {
-                    $arrr = $model->as_array();
-                    $arrr['page_meta_translation'] = array_map( function( $mmodel )  use( $id_only ) {
-                        return $id_only ? $mmodel->id : $mmodel->as_array();
-                    }, $model->translations()->find_many() );
-
-                    return $arrr;
-                }
-
-            }, $page->metas()->find_many() );
-        }
-
-        return $arr;
-    }
-
 
 }

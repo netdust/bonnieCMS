@@ -17,7 +17,6 @@ class Page extends \Model
 
     public function __get($name) {
 
-
         $r = parent::__get( $name );
         if( isset($r) ) {
             return $r;

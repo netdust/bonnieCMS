@@ -13,6 +13,8 @@ define(function (require) {
 
         AppBootstrap        = require('app-bootstrap'),
 
+        Router              = require('app/router'),
+
         Dropzone            = require('dropzone'),
         markdown            = require('epiceditor'),
 
@@ -50,6 +52,8 @@ define(function (require) {
     ntdst.start = function()
     {
         _.defer(function() {
+            var router = new Router();
+
             Backbone.history.start({
                 pushState:ntdst.options.pushState,
                 root:ntdst.options.root
@@ -109,15 +113,16 @@ define(function (require) {
         findTemplates: function( model ) {
             var templates = ntdst.api.modelFactory( 'templates' );
             if( model.get('parent') != null ) {
+
                 var template = templates.where( {name: model.get('parent').get('template') } )[0];
-                if( template.get('children') != undefined ) {
+                if( template != undefined && template.get('children') != undefined ) {
                     return template.get('children').split(',');
                 }
-            }
-            else {
 
-                return templates.getNames();
             }
+
+            return templates.getNames();
+
 
         },
 
