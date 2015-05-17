@@ -1,13 +1,13 @@
 <?php
 /**
  * Slim Globalization Plugin
- * 
+ *
  * @author     Dimitry Zolotaryov <dimitry@webit.ca>
- * @copyright  2012 
+ * @copyright  2012
  * @link       http://webit.ca/slim
  * @version    1.0.0
  * @package    SlimGlobalization
- * 
+ *
  * Permission is hereby granted, free of charge, to any person obtaining
  * a copy of this software and associated documentation files (the
  * "Software"), to deal in the Software without restriction, including
@@ -15,10 +15,10 @@
  * distribute, sublicense, and/or sell copies of the Software, and to
  * permit persons to whom the Software is furnished to do so, subject to
  * the following conditions:
- * 
+ *
  * The above copyright notice and this permission notice shall be
  * included in all copies or substantial portions of the Software.
- * 
+ *
  * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
  * EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
  * MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -32,7 +32,7 @@ namespace api\Middleware;
 /**
  * Internationalization middleware
  *
- * Automatically handles prefixing every request URL with the user's 
+ * Automatically handles prefixing every request URL with the user's
  * language. Adds the route named 'lang' for switching language.
  *
  * Use:
@@ -53,9 +53,11 @@ class I18n extends \Slim\Middleware {
      *
      * @param   array   $languages Language IDs and names
      */
-    function __construct($languages = null) {
+    function __construct($languages = null, $redirect=false) {
+        $this->redirect = $redirect;
         $this->languages = $languages;
-        $this->defaultLanguage = reset(array_keys($languages));
+        $strict_var = array_keys($languages);
+        $this->defaultLanguage = reset($strict_var);
     }
 
     /**
@@ -91,29 +93,44 @@ class I18n extends \Slim\Middleware {
     /**
      * Returns the users language.
      *
-     * Looks in the session and in the browser settings for the user's 
+     * Looks in the session and in the browser settings for the user's
      * prefered language. If the language is not part of the supported
      * set, returns the default language.
      *
      * @return  string The user's language or the default language
+     *
+     * 09/05/2015
+     * adapted method
+     * first look in url, then browser, then session, if nothing default
      */
     function getUserLanguage() {
+
         $language = null;
-        if (isset($_SESSION['language'])) {
+
+        $uri = explode('/', trim($this->app->request()->getPathInfo(), '/'));
+        if( $this->validateLanguage($uri[0]) ) // get from URI
+        {
+            $language = $uri[0];
+
+        } else if(isset($_SESSION['language']) )  // get from session
+        {
             $language = $_SESSION['language'];
-        } else if ($accept_languages = $this->app->request()->headers('ACCEPT_LANGUAGE')) {
+
+        } else if ($accept_languages = $this->app->request()->headers('ACCEPT_LANGUAGE'))   // get from browser
+        {
             foreach (explode(',', $accept_languages) as $language_identifier) {
-                $user_lang = reset(explode(';', trim($language_identifier)));
+                $strict_var = explode(';', trim($language_identifier));
+                $user_lang = reset($strict_var);
                 if (isset($this->languages[$user_lang])) {
                     $language = $user_lang;
                     break;
                 }
             }
-
         } else {
             $language = $this->defaultLanguage;
         }
-        return $language;
+
+        return $this->setUserLanguage($language);
     }
 
     /**
@@ -126,8 +143,12 @@ class I18n extends \Slim\Middleware {
      * @return  string The actual langauge assigned
      */
     function setUserLanguage($language) {
+
         $_SESSION['language'] = $this->verifyLanguage($language);
+        $_SESSION['language.id'] = array_search( $_SESSION['language'], array_keys($this->languages)) + 1;
+
         return $_SESSION['language'];
+
     }
 
     /**
@@ -138,10 +159,20 @@ class I18n extends \Slim\Middleware {
      * @return  string The same language or the default language
      */
     function verifyLanguage($language) {
-        if (!isset($this->languages[$language])) {
+        if (!$this->validateLanguage($language)) {
             $language = $this->defaultLanguage;
         }
         return $language;
+    }
+
+    /**
+     * Check if the given language is valid or not.
+     *
+     * @param   string  $language   The language to verify
+     * @return  Boolean
+     */
+    function validateLanguage($language) {
+        return isset($this->languages[$language]);
     }
 
     /**
@@ -152,14 +183,30 @@ class I18n extends \Slim\Middleware {
      * @return  string URI without the language
      */
     function stripLanguage($uri, $language) {
-        $newUri = ltrim($uri, '/');
-        $newUri = substr($newUri, strlen($language));
-        return $newUri;
+        $test_uri = explode('/', trim($uri, '/'));
+        if( $test_uri[0] ==  $language ) {
+            $newUri = ltrim($uri, '/');
+            $newUri = substr($newUri, strlen($language));
+            return $newUri;
+        }
+        return $uri;
+    }
+
+    /**
+     * Returns the given language set in URI
+     *
+     * @param   string  $uri    The URI from which to strip the language
+     * @return  string language
+     */
+
+    function getResourceLanguage( $resourceUri ){
+        $uri = explode('/', trim($resourceUri, '/'));
+        return $this->verifyLanguage($uri[0]);
     }
 
     /**
      * Returns the path modified with the language.
-     * 
+     *
      * If the given language is not valid, method uses the default
      * language.
      *
@@ -169,7 +216,7 @@ class I18n extends \Slim\Middleware {
      */
     function changeResourceLanguage($resourceUri, $language) {
         $language = $this->verifyLanguage($language);
-        $pathParts = explode('/', ltrim(strval($resourceUri), '/')); 
+        $pathParts = explode('/', ltrim(strval($resourceUri), '/'));
 
         $newPath = null;
         if (!$pathParts[0]) {
@@ -197,19 +244,22 @@ class I18n extends \Slim\Middleware {
         $resourceUri = $app->request()->getResourceUri();
         $userLanguage = $this->getUserLanguage();
         $uriShouldBe = $this->changeResourceLanguage($resourceUri, $userLanguage);
-        
-        if ($uriShouldBe != $resourceUri) {
+
+        if ($uriShouldBe != $resourceUri && $this->redirect) {
             $app->redirect($uriShouldBe);
         } else {
+
             $app->config('languages', $this->languages);
-            $app->config('language.id', $userLanguage);
+            $app->config('language', $userLanguage);
+            $app->config('language.id', array_search( $userLanguage, array_keys($this->languages)) + 1);
             $app->config('language.name', $this->languages[$userLanguage]);
 
             $realPath = $this->stripLanguage($resourceUri, $userLanguage);
 
+
             $environment = $app->environment();
-            $environment->offsetSet('PATH_INFO', $realPath);
-            $environment->offsetSet('SCRIPT_NAME', $environment->offsetGet('SCRIPT_NAME') . "/$userLanguage");
+            $environment->offsetSet('PATH_INFO', '/'.ltrim($realPath,'/'));
+            //$environment->offsetSet('SCRIPT_NAME', $environment->offsetGet('SCRIPT_NAME') . "/$userLanguage");
 
             $this->addRoutes();
             $this->next->call();

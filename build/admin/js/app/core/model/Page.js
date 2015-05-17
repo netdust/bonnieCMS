@@ -69,6 +69,8 @@ define(function (require) {
 
             attrs = this.attributes;
 
+            console.log( this );
+
             var translations = attrs['page_translation'];
             translations.each( function(model){
                 _.extend( errs, model.validate() );

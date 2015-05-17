@@ -5,11 +5,14 @@
 $vendorDir = dirname(dirname(__FILE__));
 $baseDir = dirname(dirname(dirname($vendorDir)));
 
+$baseDir = $baseDir.'\build';
+
 return array(
-    'libraries' => array($baseDir . '/build/system/api'),
-    'helpers' => array($baseDir . '/build/system/api'),
-    'cms' => array($baseDir . '/build/system/api/Model'),
-    'api' => array($baseDir . '/build/system'),
+    'plugins' => array($baseDir . '/public',),
+    'libraries' => array($baseDir . '/system/api'),
+    'helpers' => array($baseDir . '/system/api'),
+    'cms' => array($baseDir . '/system/api/Model'),
+    'api' => array($baseDir . '/system'),
     'Twig_Extensions_' => array($vendorDir . '/slim/extras/Views/Extension'),
     'Twig_' => array($vendorDir . '/twig/twig/lib'),
     'Slim\\Extras' => array($vendorDir . '/slim/extras'),

@@ -71,10 +71,11 @@ class ShareHelpers extends \Slim\Views\TwigExtension
      *
      * @return string <a href="..."> content
      */
-    public function getFacebookLink($url, $title='title', $summary='text')
+    public function getFacebookLink($app_id, $url, $redirect_uri='/')
     {
         //https://www.facebook.com/sharer.php?s=100&p[title]={title}&p[summary]={text}&p[url]={url}&p[images][0]={image}
-        return 'https://www.facebook.com/sharer.php?s=100&p[title]='.rawurlencode($title).'&p[summary]='.rawurlencode($summary).'&p[url]='.rawurlencode($url).$this->appendHandler(572, 350);
+        //return 'https://www.facebook.com/sharer.php?m2w&s=100&p[title]='.rawurlencode($title).'&p[summary]='.rawurlencode($summary).'&p[url]='.rawurlencode($url).$this->appendHandler(572, 350);
+        return 'https://www.facebook.com/dialog/share?app_id='.$app_id.'&display=popup&redirect_uri='.rawurlencode($redirect_uri).'&href='.rawurlencode($url).$this->appendHandler(572, 350);
     }
 
 

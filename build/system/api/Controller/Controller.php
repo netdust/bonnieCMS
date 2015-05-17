@@ -12,6 +12,8 @@ class Controller
 
     protected function _get( $id, $type='page', $param=array() )
     {
+        $this->app->applyHook( $type.'.get', $id, $param );
+
         if( !$id ) $arr = \Model::factory($type)->find_array();
         else {
             $arr = \Model::factory($type)->find_one( $id )->as_array();

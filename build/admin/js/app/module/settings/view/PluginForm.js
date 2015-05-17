@@ -79,7 +79,7 @@ define(function (require) {
         },
 
         updateModel: function( e ) {
-            var o = {};;
+            var o = {};
             var val = $(e.currentTarget).val();
             var key = $(e.currentTarget).attr('id');
             o[key] = val;

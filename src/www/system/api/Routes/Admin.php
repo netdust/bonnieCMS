@@ -31,8 +31,9 @@ $app->group(
                     $auth->login();
                     return true;
                 } catch( \services\AuthenticationException $e){
+                    $r = $app->request()->getPathInfo();
                     $app->flash('message', 'Login required');
-                    $app->redirect( $app->request->getRootUri(). '/cms/login?r='.$app->request()->getPathInfo() );
+                    $app->redirect( $app->request->getRootUri(). '/cms/login' .( $r=='/cms/login' ? '' : '?r='.$r ) );
                 }
             }
 
@@ -49,13 +50,13 @@ $app->group(
 
         });
 
-/*
+
         $app->get("/login", function () use ($app) {
             if ($app->request()->get('r') && $app->request()->get('r') != '/logout' && $app->request()->get('r') != '/login') {
                 $_SESSION['urlRedirect'] = $app->request()->get('r');
             }
             $app->render('\Authentication\Login.php');
-        });*/
+        });
 
         $app->post("/login", function () use ($app) {
 

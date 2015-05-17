@@ -17,7 +17,6 @@ class Page extends \Model
 
     public function __get($name) {
 
-
         $r = parent::__get( $name );
         if( isset($r) ) {
             return $r;
@@ -95,8 +94,8 @@ class Page extends \Model
 
         if( $trs = $this->translation()->find_one() ){
             $arr['slug'] = $trs->slug;
-            $arr['title'] = $trs->description;
-            $arr['content'] = $trs->content;
+            $arr['title'] = $this->markdown($trs->description);
+            $arr['content'] = $this->markdown($trs->content);
         }
 
         $arr['translation'] = array_map( function( $trans ) {
@@ -107,7 +106,7 @@ class Page extends \Model
         foreach( $metas as $meta ) {
             $key = $meta->key;
             $value = $meta->value;
-            $arr[$key] = $value;
+            $arr[$key] = $this->markdown($value);
         }
 
         $arr['children'] = array_map( function( $child ) {
@@ -116,6 +115,10 @@ class Page extends \Model
         $arr['num_children'] = count( $arr['children'] );
 
         return $arr;
+    }
+
+    public function markdown( $str ) {
+        return preg_replace('!^<p>(.*?)</p>$!i', '$1',  \Michelf\Markdown::defaultTransform($str));
     }
 
 }

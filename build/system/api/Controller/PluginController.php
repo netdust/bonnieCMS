@@ -15,13 +15,13 @@ class PluginController extends \api\Controller\JsonController
     {
         parent::init_data( $key );
 
+
         foreach($this->data_array as $pl) {
+
             if( isset( $pl->installed ) && $pl->installed ) {
                 $class= $pl->namespace.'\Plugin';
                 if( !$this->app->container->has( $pl->namespace ) ) {
-                    $this->app->container->singleton($pl->namespace, function () use( $class ) {
-                        return new $class;
-                    });// make them available for other classes
+                    $this->app->add( new $class( $pl ) );
                 }
             }
         }

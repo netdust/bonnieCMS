@@ -19,7 +19,7 @@ $app->group(
         // Get contacts
         $app->get('/', function () {
             // auto generate docs here
-            echo 'ok';
+            echo 'welcome to this api';
         });
 
         // Group for API Version 1
@@ -39,6 +39,7 @@ $app->group(
                     else {
                         throw new Exception("Invalid data type given, ". $controller);
                     }
+
                 };
 
                 // GET page/1/meta/8
@@ -53,10 +54,12 @@ $app->group(
                         else {
                             throw new Exception("Method does not exist, ". $app->controller);
                         }
+
                     });
 
                 $app->post('/:model(/:id(/:function)?)?', $controllerFactory,
-                    function($model, $id = false, $function = false) use ($app) {
+                    function($model, $id = false, $function = false) use ($app)
+                    {
                         $param = $app->request()->params();
                         if( !$function ) $app->controller->post( $id, $param );
                         else if(is_callable(array( $app->controller, $function ))) {
@@ -68,7 +71,8 @@ $app->group(
                     });
 
                 $app->patch('/:model/:id/:function', $controllerFactory,
-                    function($model, $id = false, $function = false) use ($app) {
+                    function($model, $id = false, $function = false) use ($app)
+                    {
                         $param = (array) json_decode($app->request()->getBody());
                         if($function && is_callable(array( $app->controller, $function ))) {
                             call_user_func_array( array( $app->controller, $function ), array($id, $param) );
@@ -92,7 +96,8 @@ $app->group(
                 */
 
                 $app->map('/:model/:id', $controllerFactory,
-                    function($model, $id = false) use ($app) {
+                    function($model, $id = false) use ($app)
+                    {
                         $param = (array) json_decode($app->request()->getBody());
                         call_user_func_array(array($app->controller, strtolower( $app->request->getMethod() ) ), array($id, $param) );
                     })->via('PATCH', 'PUT', 'DELETE');

@@ -122,6 +122,19 @@ class PageController extends \api\Controller\Controller
         $this->render( 200, $this->_translation( $id, $tid ) );
     }
 
+    protected function _children( $id ) // returns array
+    {
+        $this->app->applyHook( 'page.children', $id );
+
+        $page = self::getPage( $id );
+        return $page->children()->find_array();
+    }
+
+    public function children( $id=0, $tid=0, $param=array() ) // output json
+    {
+        $this->render( 200, $this->_children( $id ) );
+    }
+
     public function sort( $id=0, $tid=0, $param=array() )
     {
         $this->app->applyHook( 'page.sort', $id, $tid );
@@ -144,6 +157,16 @@ class PageController extends \api\Controller\Controller
         $this->app->applyHook( 'page.copy', $id, $tid );
 
         $request = $this->_get( $id );
+
+        //todo:add this to page _get?
+
+        $children = $this->_children( $id );
+        foreach( $children as $inx => $page ) {
+            $children[$inx]['page_translation'] = $this->_translation( $page['id'] );
+            $children[$inx]['page_meta']  = $this->_meta( $page['id'] );
+        }
+
+        $request['page'] = $this->_clear_ids($children);
         $this->_create( $request, true, true );
     }
 

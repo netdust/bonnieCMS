@@ -31,7 +31,6 @@ class Util {
                 : strcmp($b->{$key}, $a->{$key});
         };
     }
-
     public static function url() {
         $app = \Slim\Slim::getInstance();
         return  $app->request->getUrl();

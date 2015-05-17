@@ -50,17 +50,11 @@ $config['app']['cache.ttl'] = 60;
 $config['app']['rate.limit'] = 1000;
 
 // Logger
-$config['app']['log.writer'] = new \Flynsarmy\SlimMonolog\Log\MonologWriter(array(
-    'handlers' => array(
-        new \Monolog\Handler\StreamHandler(
-            realpath(__ROOT__ . 'public/data/logs')
-                .'/'. $config['app']['mode']  . '_' .date('Y-m-d').'.log'
-        ),
-    ),
+$config['app']['log.writer'] = new \Slim\Extras\Log\DateTimeFileWriter(array(
+    'path'      => __ROOT__ . 'public/data/logs',
+    'name_format' => 'Y-m-d',
+    'message_format' => '%label% - %date% - %message%'
 ));
-
-
-
 
 function get_mode($whitelist)  {
     $isapi = (bool) preg_match('|/api/v.*$|', $_SERVER['REQUEST_URI']);

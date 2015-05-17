@@ -3,19 +3,20 @@
 
 , "theme":"default"
 
-, "sitename":""
-, "description":""
+, "sitename":"Maybelline100"
+, "description":"Clash of the Decades"
 
 , "languages":["fr","nl"]
 
 , "plugins": [
-  {"label":"analytics","namespace":"plugins\\analytics","installed":"1","ga":"test","description":"Adds analytics each html-page","path":"plugins\/analytics"}
+  {"label":"analytics","namespace":"plugins\\analytics","installed":"1","ga":"UA-27091442-21","description":"Adds analytics each html-page","path":"plugins\/analytics"}
 , {"label":"canonical","namespace":"plugins\\canonical","installed":"1","path":"plugins\/canonical","description":"Adds canonical url to each page based on language and page slug"}
-, {"label":"social","namespace":"plugins\\social","installed":"1","title":"","share":"","image":"","description":"Adds Facebook graph data to each html-page","path":"plugins\/social"}
+, {"label":"social","namespace":"plugins\\social","installed":"1", "id":"650846041715965","title":"","share":"","image":"","description":"Adds Facebook graph data to each html-page","path":"plugins\/social"}
+, {"label":"youtube","namespace":"plugins\\youtube","installed":"1", "description":"Injects youtube script into page","path":"plugins\/youtube"}
 ]
 
 , "templates":[
-  {"parent":"","label":"base","description":"base template, all other templates extend this one","file":"base.html","meta":[{"type":"Text","key":"seo_title","tab":"SEO"},{"type":"TextArea","key":"seo_description","tab":"SEO"}]}
+  {"parent":"","label":"base","description":"base template, all other templates extend this one","file":"base.html","meta":[{"type":"Text","key":"seo_title","tab":"SEO"},{"type":"TextArea","key":"seo_description","tab":"SEO"},{"type":"Text","key":"fb_title","tab":"share"},{"type":"TextArea","key":"fb_description","tab":"share"},{"type":"File","key":"fb_image","tab":"share"},{"type":"TextArea","key":"script","tab":"include"},{"type":"TextArea","key":"css","tab":"include"}]}
 , {"parent":"base","label":"home","description":"template for the homepage of your site","file":"home.html","meta":[]}
 , {"parent":"base","label":"contact","description":"template for a contactform","file":"contact.html","meta":[{"type":"Text","key":"contact_email","tab":"CONTACT"},{"type":"Text","key":"contact_tel","tab":"CONTACT"}]}
 ]

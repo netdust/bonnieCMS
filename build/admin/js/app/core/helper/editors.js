@@ -61,7 +61,7 @@ define(function (require) {
         initialize: function(options) {
             options.schema.options = function(callback, editor) {
                 callback(  ntdst.api.modelFactory('pages').getOptionList() );
-            };;
+            };
             editors.Select.prototype.initialize.call(this, options);
         },
 

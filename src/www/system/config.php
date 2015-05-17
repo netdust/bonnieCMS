@@ -13,7 +13,7 @@ $config['db'] = array(
     'prefix' => 'cms',
     'driver' => 'mysql',
     'dbpath' => 'localhost',
-    'dbname' => 'default',
+    'dbname' => 'maybelline100',
     'username' => 'root',
     'password' => ''
 );

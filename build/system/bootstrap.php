@@ -5,7 +5,7 @@ define('ENV', getenv('APP_ENV'));
 define('VERSION', 'v1');
 define('EXT', '.php');
 
-define('__ROOT__', dirname(__FILE__) . './../'.DS);
+define('__ROOT__', dirname( dirname(__FILE__) ) . DS );
 
 @session_start();
 
@@ -16,9 +16,9 @@ require_once __ROOT__ . 'system/vendor/autoload.php';
 require_once __ROOT__. 'system/config.php';
 
 // Models
-require_all( 'api/model' );
-require_all( 'services' );
-require_all( 'helpers' );
+require_all(  __ROOT__. 'system/api/Model' );
+require_all(  __ROOT__. 'system/services' );
+require_all(  __ROOT__. 'system/helpers' );
 
 # add Configuration
 
@@ -76,6 +76,13 @@ try {
     $app->getLog()->error($e->getMessage());
 }
 
+// Plugins
+try {
+    $controller = new \api\Controller\PluginController();
+} catch (\PDOException $e) {
+    $app->getLog()->error($e->getMessage());
+}
+
 // setup frontend template engine
 $view = $app->view();
 $view->parserDirectory = __ROOT__.'system/vendor/Twig';
@@ -94,12 +101,7 @@ $view->parserExtensions = array(
 );
 
 
-// Plugins
-try {
-    $controller = new \api\Controller\PluginController();
-} catch (\PDOException $e) {
-    $app->getLog()->error($e->getMessage());
-}
+
 
 // Init themes and function
 try {
@@ -112,7 +114,7 @@ try {
 
 
 function require_all($mod) {
-    $fi = new FilesystemIterator(__ROOT__ .'system/' . $mod, FilesystemIterator::SKIP_DOTS);
+    $fi = new FilesystemIterator($mod, FilesystemIterator::SKIP_DOTS);
     foreach($fi as $file) {
         if($file->isFile() and $file->isReadable() and '.' . $file->getExtension() == EXT) {
             require $file->getPathname();
@@ -121,4 +123,5 @@ function require_all($mod) {
 }
 
 class ResourceNotFoundException extends \RuntimeException{}
+
 class FileUploadException extends \Exception{}

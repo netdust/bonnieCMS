@@ -46,6 +46,7 @@
   "autoload": {
     "psr-0": {
       "api": ["build/system","bonnie/system"]
+      , "plugins": ["build/public", "bonnie/build/public"]
       , "cms": ["build/system/api/Model", "bonnie/system/api/Model"]
       , "helpers": ["build/system/api", "bonnie/system/api"]
       , "libraries": ["build/system/api", "bonnie/system/api"]

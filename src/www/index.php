@@ -10,7 +10,7 @@ require(__ROOT__.'/system/api/Routes/Api.php');
 $app->hook('slim.before.dispatch', function () use ($app)
 {
 
-    if( !strpos($_SERVER['REQUEST_URI'],'cms') )
+    if( !strpos($_SERVER['REQUEST_URI'],'cms') && !strpos($_SERVER['REQUEST_URI'],'api') )
     {
         $app->applyHook('before.page');
 
@@ -29,8 +29,6 @@ $app->hook('slim.before.dispatch', function () use ($app)
 
 
         $templateData = array(
-
-            'page' => $app->page->get_array(),
 
             'site' => $app->config('theme'),
 
@@ -51,6 +49,7 @@ $app->hook('slim.before.dispatch', function () use ($app)
 
         $app->view()->appendData( $templateData );
     }
+
 
 });
 

@@ -29,6 +29,7 @@ class Plugin extends \Slim\Middleware {
             return function () use ( $app, $plugin )
             {
 
+                /*
                 $env = $app->environment();
                 $current = $app->request()->getPathInfo() != '/'
                     ? $app->request()->getURL().str_replace( $app->request()->getPathInfo(), $env['slim.localization.original_path'], $app->request()->getPath() )
@@ -40,7 +41,7 @@ class Plugin extends \Slim\Middleware {
 
                 $app->page->canonical = $target;
                 if( $current != $target )
-                echo '<link rel="canonical" href="'.$target.'" />';
+                echo '<link rel="canonical" href="'.$target.'" />';*/
             };
 
         };

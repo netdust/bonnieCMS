@@ -24,78 +24,63 @@ $app->group(
         };
 
         $authenticate = function () use ($app) {
-            //return function () use ($app) {
-                if (!isset($_SESSION['user']) || !array_key_exists('username', $_SESSION['user'] )) {
-                    $_SESSION['urlRedirect'] = $app->request()->getPathInfo();
-                    $app->flash('error', 'Login required');
-                    $app->redirect( $app->request->getRootUri(). '/cms/login' );
+
+            if( !isset($_SESSION['user']) || !array_key_exists('username', $_SESSION['user'] ) ) {
+                try {
+                    $auth = new \services\Authentication(); // check if we can login using a cookie
+                    $auth->login();
+                    return true;
+                } catch( \services\AuthenticationException $e){
+                    $r = $app->request()->getPathInfo();
+                    $app->flash('message', 'Login required');
+                    $app->redirect( $app->request->getRootUri(). '/cms/login' .( $r=='/cms/login' ? '' : '?r='.$r ) );
                 }
-            //};
+            }
+
+            return true;
         };
 
         $app->get("/logout", function () use ($app) {
-            session_unset();
-            $app->view()->setData('user', null);
-            $app->flash('error', 'Logout successful');
+
+            $auth = new \services\Authentication($_SESSION['user']['email']);
+            $auth->logout();
+
+            $app->flash('message', 'Logout successful');
             $app->redirect($app->request->getRootUri(). '/cms/login');
+
         });
 
+
         $app->get("/login", function () use ($app) {
-            $flash = $app->view()->getData('flash');
-
-            $error = '';
-            if (isset($flash['error'])) {
-                $error = $flash['error'];
-            }
-
-            $urlRedirect = '/';
-
             if ($app->request()->get('r') && $app->request()->get('r') != '/logout' && $app->request()->get('r') != '/login') {
                 $_SESSION['urlRedirect'] = $app->request()->get('r');
             }
-
-            if (isset($_SESSION['urlRedirect'])) {
-                $urlRedirect = $_SESSION['urlRedirect'];
-            }
-
-            $email_value = $email_error = $password_error = '';
-
-
-            if (isset($flash['email'])) {
-                $email_value = $flash['email'];
-            }
-
-            $app->render('\Authentication\Login.php', array('error' => $error, 'email_value' => $email_value, 'urlRedirect' => $app->request->getRootUri(). '/'.$urlRedirect));
+            $app->render('\Authentication\Login.php');
         });
 
         $app->post("/login", function () use ($app) {
 
             $email = $app->request()->post('email');
             $password = $app->request()->post('password');
+            $remember = $app->request()->post('remember');
 
-            $errors = array();
+            $auth = new \services\Authentication($email, $password, $remember);
 
-            $auth = new \services\Authentication($app->request()->post('email'), $app->request()->post('password'));
+            try {
+                $auth->login( );
 
-            //if username or password is empty
-            if($auth->isEmpty()){
-                $_SESSION['urlRedirect'] = $app->request()->getPathInfo();
-                $app->flash('error', 'Email and password required');
-                $app->redirect($app->request->getRootUri(). '/cms/login');
-            }else if(!$auth->login()){
-                $app->flash('email', $email);
-                $app->flash('error', $auth->getError());
+                if (isset($_SESSION['urlRedirect'])) {
+                    $urlRedirect = $_SESSION['urlRedirect'];
+                    unset( $_SESSION['urlRedirect'] );
+                    $app->redirect( $app->request->getRootUri(). $urlRedirect );
+                }
+                else $app->redirect($app->request->getRootUri(). '/cms/');
+
+            } catch( \services\AuthenticationException $e ) {
+                $app->flash('message', $e->getMessage());
                 $app->redirect($app->request->getRootUri(). '/cms/login');
             }
-            //success! Set the following properties
-            $_SESSION['user'] = $auth->getUser(); //$email;
 
-            if (isset($_SESSION['urlRedirect'])) {
-                $tmp = $_SESSION['urlRedirect'];
-                unset($_SESSION['urlRedirect']);
-                $app->redirect($app->request->getRootUri(). '/'.$tmp);
-            }
-            $app->redirect($app->request->getRootUri(). '/cms/');
         });
 
         $app->get("/createuser", function () use ($app) {

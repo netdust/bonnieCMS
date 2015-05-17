@@ -141,6 +141,7 @@ define(function (require) {
                     });
                 }
                 else {
+                    console.log( errors );
                     Backbone.trigger('notification', { message: 'Not all fields are filled in like they should, have a look', type: 'warning' });
                 }
             }

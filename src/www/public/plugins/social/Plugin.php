@@ -3,7 +3,7 @@
 namespace plugins\social;
 
 use Slim\Slim;
-use \controller\PageController;
+use api\controller\PageController;
 
 
 class Plugin extends \Slim\Middleware {
@@ -33,14 +33,14 @@ class Plugin extends \Slim\Middleware {
             return function () use ( $app, $plugin )
             {
 
-                $app->page->sitename    = $app->config('sitename');
+                $app->page->sitename    = $app->config('theme')->sitename;
                 $app->page->image       = $plugin->search( $app->page->parent, 'image' );
                 $app->page->share       = $plugin->search( $app->page->parent, 'share' );
                 $app->page->seo_title   = $plugin->search( $app->page->parent, 'seo_title' );
-                $app->page->url         = $app->request()->getUrl() .$app->request()->getScriptName().'/'.$app->config('i18n.locale');
+                $app->page->url         = $app->request()->getUrl() .$app->request()->getScriptName().'/'.$app->config('language').$app->request()->getResourceUri();
 
                 $page  = $app->page->get_array();
-                $page['image'] = $app->request->getUrl() . \helpers\Util::to( 'data/upload/' . $page['image'] );
+                $page['image'] = $app->request->getUrl() . \helpers\Util::to(  $page['image'] );
 
                 $meta  = $plugin->facebook();
 
@@ -77,7 +77,7 @@ class Plugin extends \Slim\Middleware {
 
         if( isset( $this->settings ) && isset( $this->settings->id ) && $this->settings->id != ''  ){
             $app->hook( 'script', $script( $app ) );
-            $app->hook( 'render.after.body', $body( $app ) );
+            $app->hook( 'body', $body( $app ) );
         }
 
         $this->next->call();
@@ -86,19 +86,13 @@ class Plugin extends \Slim\Middleware {
     public function facebook_embed( $id ) {
         ob_start(); ?>
 <script type="text/javascript">
-    window.fbAsyncInit = function() {
-        FB.init({
-            appId      : '<?php echo $id; ?>',
-            xfbml      : true,
-            version    : 'v2.2'
-        });
-    };
+
     // Load the SDK Asynchronously
     (function(d, s, id){
         var js, fjs = d.getElementsByTagName(s)[0];
         if (d.getElementById(id)) {return;}
         js = d.createElement(s); js.id = id;
-        js.src = "//connect.facebook.net/en_US/sdk.js";
+        js.src = "//connect.facebook.net/en_GB/sdk.js#xfbml=1&version=v2.3&appId=<?php echo $id; ?>";
         fjs.parentNode.insertBefore(js, fjs);
     }(document, 'script', 'facebook-jssdk'));
 </script>

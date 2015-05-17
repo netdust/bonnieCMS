@@ -22,6 +22,14 @@
 /* @todo: BUG previewing uploaded files doesnt work */
 
 
+/* @todo: bug when saving page with children, they get saves too as empty page */
+/* @todo: bug when saving language, not loaded again */
+/* @todo: bug when saving meta with special tokens */
+
+
+/* @todo: feature make meta draggable */
+
+
 //plugins
 /* @todo: finish plugin settings */
 
