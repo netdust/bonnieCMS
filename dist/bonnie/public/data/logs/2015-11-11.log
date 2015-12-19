@@ -1,0 +1,83 @@
+ERROR - 2015-11-11T21:26:06+01:00 - cms\User Object
+(
+    [roles:cms\User:private] => 
+    [orm] => ORM Object
+        (
+            [_connection_name:protected] => default
+            [_table_name:protected] => cms_user
+            [_table_alias:protected] => 
+            [_values:protected] => Array
+                (
+                )
+
+            [_result_columns:protected] => Array
+                (
+                    [0] => *
+                )
+
+            [_using_default_result_columns:protected] => 1
+            [_join_sources:protected] => Array
+                (
+                )
+
+            [_distinct:protected] => 
+            [_is_raw_query:protected] => 
+            [_raw_query:protected] => 
+            [_raw_parameters:protected] => Array
+                (
+                )
+
+            [_where_conditions:protected] => Array
+                (
+                )
+
+            [_limit:protected] => 
+            [_offset:protected] => 
+            [_order_by:protected] => Array
+                (
+                )
+
+            [_group_by:protected] => Array
+                (
+                )
+
+            [_having_conditions:protected] => Array
+                (
+                )
+
+            [_data:protected] => Array
+                (
+                    [id] => 2
+                    [ip_address] => ::1
+                    [username] => stefan@netdust.be
+                    [password] => $2a$08$8ZYHFVysjefykNt6FXAd/O3KdJgjDsp6AZz6omH1SOcSto6GmrvvG
+                    [salt] => a60a3d5a5548fc26ee59ad34c30883ad3ef85cf1
+                    [email] => stefan@netdust.be
+                    [activation_code] => 
+                    [forgotten_password_code] => 2460239837eaefd4c86efd09ce0301e6071dd856
+                    [forgotten_password_time] => 1444745222
+                    [remember_code] => 61b2d24a2e657598cce030d432b13148d04df9d4
+                    [created_on] => 1426500914
+                    [last_login] => 1447273521
+                    [active] => 1
+                    [first_name] => Stefan
+                    [last_name] => Vandermeulen
+                    [company] => netdust gcv.
+                    [phone] => 0475238704
+                    [role] => admin
+                )
+
+            [_dirty_fields:protected] => Array
+                (
+                )
+
+            [_expr_fields:protected] => Array
+                (
+                )
+
+            [_is_new:protected] => 
+            [_instance_id_column:protected] => id
+        )
+
+)
+

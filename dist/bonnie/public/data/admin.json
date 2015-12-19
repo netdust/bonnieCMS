@@ -1,0 +1,172 @@
+{
+  "home": 1,
+  "theme": "default",
+  "sitename": "Maybelline100",
+  "description": "Clash of the Decades",
+  "languages": "fr:Fran\u00e7ais,nl:Nerderlands",
+
+  "plugins": [
+    {
+      "label": "forms",
+      "namespace": "plugins\\forms",
+      "installed": "1",
+      "description": "Adds form functionality using shortcodes",
+      "path": "plugins\/forms"
+    },
+    {
+      "label": "analytics",
+      "namespace": "plugins\\analytics",
+      "installed": "1",
+      "ga": "UA-xxxxxxx-xx",
+      "description": "Adds analytics each html-page",
+      "path": "plugins\/analytics"
+    },
+    {
+      "label": "canonical",
+      "namespace": "plugins\\canonical",
+      "installed": "1",
+      "path": "plugins\/canonical",
+      "description": "Adds canonical url to each page based on language and page slug"
+    },
+    {
+      "label": "social",
+      "namespace": "plugins\\social",
+      "installed": "1",
+      "id": "650846041715965",
+      "title": "",
+      "share": "",
+      "image": "",
+      "description": "Adds Facebook graph data to each html-page",
+      "path": "plugins\/social"
+    },
+    {
+      "label": "youtube",
+      "namespace": "plugins\\youtube",
+      "installed": "0",
+      "description": "Injects youtube script into page",
+      "path": "plugins\/youtube"
+    },
+    {
+      "label": "picturefill",
+      "namespace": "plugins\\picturefill",
+      "installed": "1",
+      "description": "Responsive images using picturefill js",
+      "path": "plugins\/picturefill",
+      "jpeg_compression": "80",
+      "folder": "public\/data\/uploads\/",
+      "sizes": {
+        "small": {"width": 180},
+        "medium": {
+          "width": 375,
+          "query": "(min-width: 400px)"
+        },
+        "large": {
+          "width": 480,
+          "query": "(min-width: 800px)"
+        },
+        "extralarge": {
+          "width": 768,
+          "query": "(min-width: 1000px)"
+        }
+      }
+    }
+  ],
+  "templates": [
+    {
+      "parent": "",
+      "label": "base",
+      "description": "base template, all other templates extend this one",
+      "file": "base.html",
+      "meta": [
+        {
+          "type": "Text",
+          "key": "fb title",
+          "tab": "share"
+        },
+        {
+          "type": "TextArea",
+          "key": "fb description",
+          "tab": "share"
+        },
+        {
+          "type": "File",
+          "key": "fb image",
+          "tab": "share"
+        },
+        {
+          "type": "TextArea",
+          "key": "script",
+          "tab": "include"
+        },
+        {
+          "type": "TextArea",
+          "key": "css",
+          "tab": "include"
+        },
+        {
+          "type": "Text",
+          "key": "seo title",
+          "tab": "SEO"
+        },
+        {
+          "type": "TextArea",
+          "key": "seo description",
+          "tab": "SEO"
+        }
+      ]
+    },
+    {
+      "parent": "base",
+      "label": "form",
+      "description": "template for a form",
+      "file": "form.html",
+      "meta": [
+        {
+          "type": "Text",
+          "key": "mailto",
+          "tab": "Form"
+        },
+        {
+          "type": "TextArea",
+          "key": "confirmation",
+          "tab": "Form"
+        },
+        {
+          "type": "TextArea",
+          "key": "error message",
+          "tab": "Form"
+        }
+      ]
+    },
+    {
+      "parent": "base",
+      "label": "home",
+      "description": "template for the homepage of your site",
+      "file": "home.html",
+      "meta": []
+    }
+  ],
+  "contenttypes": [
+    {
+      "label": "image",
+      "description": "an image contenttype with predefined resolutions",
+      "resolution-small": "300x300",
+      "resolution-big": "900x900",
+      "templates": "base",
+      "meta": [
+        {
+          "type": "File",
+          "key": "file"
+        },
+        {
+          "type": "Text",
+          "key": "title"
+        },
+        {
+          "type": "TextArea",
+          "key": "description"
+        }
+      ]
+    }
+  ]
+}

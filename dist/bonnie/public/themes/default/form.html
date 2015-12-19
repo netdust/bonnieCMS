@@ -1,0 +1,13 @@
+
+
+<div class="form">
+
+    {{page_title()}}
+
+    <form id="form_{{page_id()}}" method="post" action="{{loc.path}}/forms">
+        <input type="hidden" name="{{csrf_key}}" value="{{csrf_token}}">
+        <input type="hidden" name="form" value="{{page_id()}}">
+        {{page_content()}}
+    </form>
+
+</div>
